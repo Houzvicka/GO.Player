@@ -119,10 +119,47 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainPage.xaml.cs">
+    <Compile Include="Contracts\IConfigService.cs" />
+    <Compile Include="Contracts\ISettingsService.cs" />
+    <Compile Include="Helpers\Base64Helpers.cs" />
+    <Compile Include="Helpers\LocalSettings.cs" />
+    <Compile Include="Helpers\PlayBackTest\DomainJoin.cs" />
+    <Compile Include="Helpers\PlayBackTest\DomainLeave.cs" />
+    <Compile Include="Helpers\PlayBackTest\DomainManagement.cs" />
+    <Compile Include="Helpers\PlayBackTest\HttpHelper.cs" />
+    <Compile Include="Helpers\PlayBackTest\Indiv.cs" />
+    <Compile Include="Helpers\PlayBackTest\LicenseAcquisition.cs" />
+    <Compile Include="Helpers\PlayBackTest\LicenseManagement.cs" />
+    <Compile Include="Helpers\PlayBackTest\Metering.cs" />
+    <Compile Include="Helpers\PlayBackTest\Playback.cs" />
+    <Compile Include="Helpers\PlayBackTest\PRUtilities.cs" />
+    <Compile Include="Helpers\PlayBackTest\RequestChain.cs" />
+    <Compile Include="Helpers\PlayBackTest\Revocation.cs" />
+    <Compile Include="Helpers\PlayBackTest\SecureStop.cs" />
+    <Compile Include="Helpers\PlayBackTest\ServiceRequest.cs" />
+    <Compile Include="Helpers\PlayReadySolv.cs" />
+    <Compile Include="Model\Categories.cs" />
+    <Compile Include="Model\CurrentDevice.cs" />
+    <Compile Include="Model\Customer.cs" />
+    <Compile Include="Model\Data.cs" />
+    <Compile Include="Model\Error.cs" />
+    <Compile Include="Model\LoginResponse.cs" />
+    <Compile Include="Model\Login.cs" />
+    <Compile Include="Model\Operators.cs" />
+    <Compile Include="Model\ParentalControl.cs" />
+    <Compile Include="Model\Registration.cs" />
+    <Compile Include="Model\Video.cs" />
+    <Compile Include="Pages\LoginPage.xaml.cs">
+      <DependentUpon>LoginPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ConfigService.cs" />
+    <Compile Include="Services\SettingsService.cs" />
+    <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\ViewModelLocator.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -145,7 +182,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="MainPage.xaml">
+    <Page Include="Pages\LoginPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -154,6 +195,20 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.2</Version>
     </PackageReference>
+    <PackageReference Include="MvvmLight">
+      <Version>5.4.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.1</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="Microsoft.VCLibs, Version=14.0">
+      <Name>Visual C++ 2015 Runtime for Universal Windows Platform Apps</Name>
+    </SDKReference>
+    <SDKReference Include="Universal Smooth Streaming Client SDK, Version=1.0">
+      <Name>Microsoft Universal Smooth Streaming Client SDK</Name>
+    </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
