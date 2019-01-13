@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="HBO.UWP.Player.Pages.LoginPage"
+    x:Class="HBO.UWP.Player.Pages.PlayerPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:HBO.UWP.Player.Pages"
@@ -9,6 +9,6 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-
+        <MediaElement x:Name="Element" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AreTransportControlsEnabled="True"></MediaElement>
     </Grid>
 </Page>

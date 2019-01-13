@@ -6,19 +6,14 @@
 //// Copyright (c) Microsoft Corporation. All rights reserved
 
 using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
-using System.Collections.Generic;
-using System.Diagnostics;
-using Windows.Foundation;
 using Windows.Media.Protection.PlayReady;
-using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 
-using PlayReadyUAP;
-
-namespace PlayReadyUAP
+namespace HBO.UWP.Player.Helpers.Playback
 {
 
     public class Metering : ServiceRequest

@@ -7,11 +7,9 @@
 
 using System;
 using System.Diagnostics;
-using Windows.Foundation;
 using Windows.Media.Protection.PlayReady;
-using PlayReadyUAP;
 
-namespace PlayReadyUAP
+namespace HBO.UWP.Player.Helpers.Playback
 {
     public class DomainLeave : ServiceRequest
     {

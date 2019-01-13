@@ -1,18 +1,11 @@
-//// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-//// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-//// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-//// PARTICULAR PURPOSE.
-////
-//// Copyright (c) Microsoft Corporation. All rights reserved
-
 using System;
 using System.Diagnostics;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml;
 using Windows.Media.Protection;
 using Windows.Media.Protection.PlayReady;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
-namespace PlayReadyUAP
+namespace HBO.UWP.Player.Helpers.Playback
 {
     public class Playback
     {
@@ -25,7 +18,7 @@ namespace PlayReadyUAP
 
         RequestChain _requestChain = null;
         ServiceRequestConfigData _requestConfigData = null;
-        private string _strMediaPath = null;
+        private Uri _mediaPath = null;
         protected bool _bplayToEnd = false;
 
         public Playback(MediaElement mediaElement)
@@ -118,7 +111,7 @@ namespace PlayReadyUAP
             Debug.WriteLine("Leave Playback.SetProtectionManager()");
         }
 
-        public void SetMediaSource(string strMediaPath,
+        public void SetMediaSource(Uri mediaPath,
                                    bool bPlayToEnd)
         {
             Debug.WriteLine("Enter Playback.SetMediaSource()");
@@ -130,7 +123,7 @@ namespace PlayReadyUAP
             }
 
             _bplayToEnd = bPlayToEnd;
-            _strMediaPath = strMediaPath;
+            _mediaPath = mediaPath;
 
             //
             // In order to play Smooth Streaming content (e.g. PIFF_SuperSpeedway_720.ism at
@@ -142,32 +135,32 @@ namespace PlayReadyUAP
             // if it hasn't been added.
             //
             HookEventHandlers();
-            _mediaElement.Source = new Uri(_strMediaPath);
+            _mediaElement.Source = _mediaPath;
 
             Debug.WriteLine("Leave Playback.SetMediaSource()");
         }
 
         public void LoadMedia(MediaElement mediaElement,
-                                string strMediaPath,
+                                Uri mediaPath,
                                 bool bPlayToEnd)
         {
             Debug.WriteLine("Enter Playback.LoadMedia()");
 
             _bplayToEnd = bPlayToEnd;
             _mediaElement = mediaElement;
-            _strMediaPath = strMediaPath;
+            _mediaPath = mediaPath;
 
-            SetMediaSource(strMediaPath, bPlayToEnd);
+            SetMediaSource(mediaPath, bPlayToEnd);
 
             Debug.WriteLine("Leave Playback.LoadMedia()");
         }
 
-        public void FullPlayback(MediaElement mediaElement, string strMediaPath)
+        public void FullPlayback(MediaElement mediaElement, Uri mediaPath)
         {
             Debug.WriteLine("Enter Playback.Play()");
 
             HookEventHandlers();            
-            SetMediaSource(strMediaPath, true);
+            SetMediaSource(mediaPath, true);
             
             if (_mediaElement == null)
             {
@@ -228,15 +221,15 @@ namespace PlayReadyUAP
             Debug.WriteLine("Leave Playback.Pause()");
         }
 
-        public void Play(string strMediaPath)
+        public void Play(Uri mediaPath)
         {
             Debug.WriteLine("Enter Playback.Play()" );
-            Debug.WriteLine(strMediaPath);
+            Debug.WriteLine(mediaPath.ToString());
 
-            _strMediaPath = strMediaPath;
+            _mediaPath = mediaPath;
 
             HookEventHandlers();
-            _mediaElement.Source = new Uri( _strMediaPath );
+            _mediaElement.Source = _mediaPath;
             
             Debug.WriteLine("Leave Playback.Play()" );
         }

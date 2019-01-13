@@ -8,7 +8,7 @@
 using System.Diagnostics;
 using Windows.Media.Protection.PlayReady;
 
-namespace PlayReadyUAP
+namespace HBO.UWP.Player.Helpers.Playback
 {
     public class RequestChain
     {

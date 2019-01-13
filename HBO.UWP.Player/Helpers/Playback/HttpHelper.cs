@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Windows.Foundation.Collections;
 using Windows.Media.Protection.PlayReady;
 
-namespace PlayReadyUAP
+namespace HBO.UWP.Player.Helpers.Playback
 {
     public class HttpHelper
     {
@@ -70,7 +70,6 @@ namespace PlayReadyUAP
             Debug.WriteLine(new System.Text.UTF8Encoding().GetString( messageBytes, 0, messageBytes.Length ));
 
             HttpClient httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134");
             HttpResponseMessage response = await httpClient.PostAsync( _uri, httpContent );
             string strResponse = await response.Content.ReadAsStringAsync();
             

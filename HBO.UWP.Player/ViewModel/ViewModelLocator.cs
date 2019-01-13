@@ -13,6 +13,7 @@ namespace HBO.UWP.Player.ViewModel
 
 			SimpleIoc.Default.Register<IConfigService, ConfigService>();
 			SimpleIoc.Default.Register<ISettingsService, SettingsService>();
+			SimpleIoc.Default.Register<ICommunicationService, CommunicationService>();
             
 			SimpleIoc.Default.Register<MainViewModel>();
 		}

@@ -10,12 +10,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Media.Protection.PlayReady;
-using PlayReadyUAP;
 
-namespace PlayReadyUAP
+namespace HBO.UWP.Player.Helpers.Playback
 {
 
     sealed public class LicenseManagement 

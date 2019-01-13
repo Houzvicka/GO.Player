@@ -10,11 +10,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Windows.Media.Protection;
 using Windows.Media.Protection.PlayReady;
-using CommonServiceLocator;
-using HBO.UWP.Player.Contracts;
 using HBO.UWP.Player.Model;
 
-namespace PlayReadyUAP
+namespace HBO.UWP.Player.Helpers.Playback
 {
     public class LicenseAcquisition : ServiceRequest
     {
@@ -220,9 +218,6 @@ namespace PlayReadyUAP
             Debug.WriteLine("Enter LicenseAcquisition.AcquireLicenseReactively()");
             Exception exception = null;
 
-            ISettingsService ss;
-            ss = ServiceLocator.Current.GetInstance<ISettingsService>();
-
             try
             {
                 _serviceRequest = licenseRequest;
@@ -233,7 +228,6 @@ namespace PlayReadyUAP
                 if (RequestConfigData.ManualEnabling)
                 {
                     Debug.WriteLine("Manually posting the request...");
-                    if (!string.IsNullOrEmpty(ss.TempUriTest)) licenseRequest.DomainServiceId = new Guid(ss.TempUriTest);
 
                     HttpHelper httpHelper = new HttpHelper(licenseRequest, customHeaders);
                     await httpHelper.GenerateChallengeAndProcessResponse();
@@ -247,8 +241,6 @@ namespace PlayReadyUAP
                 Debug.WriteLine("Post-LicenseAcquisition Values:");
                 Debug.WriteLine("DomainServiceId          = " + licenseRequest.DomainServiceId.ToString());
                 DumpContentHeaderValues(licenseRequest.ContentHeader);
-
-                ss.TempUriTest = licenseRequest.ContentHeader.DomainServiceId.ToString();
             }
             catch (Exception ex)
             {
