@@ -6,6 +6,7 @@
 //// Copyright (c) Microsoft Corporation. All rights reserved
 
 using System;
+using System.Diagnostics;
 using Windows.Foundation;
 using Windows.Media.Protection.PlayReady;
 using PlayReadyUAP;
@@ -17,30 +18,30 @@ namespace PlayReadyUAP
 
         protected virtual void DomainLeaveServiceRequestCompleted(PlayReadyDomainLeaveServiceRequest sender, Exception hrCompletionStatus)
         {
-            Console.WriteLine("DomainLeaveServiceRequestCompleted");
+            Debug.WriteLine("DomainLeaveServiceRequestCompleted");
 
             if (hrCompletionStatus != null)
             {
-                Console.WriteLine("DomainLeaveServiceRequestCompleted failed with " + hrCompletionStatus.HResult);
+                Debug.WriteLine("DomainLeaveServiceRequestCompleted failed with " + hrCompletionStatus.HResult);
             }
         }
 
         void HandleIndivServiceRequest_Finished(bool bResult, object resultContext )
         {
-            Console.WriteLine("Enter DomainLeave.HandleIndivServiceRequest_Finished()");
+            Debug.WriteLine("Enter DomainLeave.HandleIndivServiceRequest_Finished()");
 
-            Console.WriteLine("HandleIndivServiceRequest_Finished(): " + bResult.ToString());
+            Debug.WriteLine("HandleIndivServiceRequest_Finished(): " + bResult.ToString());
             if (bResult)
             {
                 DomainLeaveProactively();
             }
 
-            Console.WriteLine("Leave DomainLeave.HandleIndivServiceRequest_Finished()");
+            Debug.WriteLine("Leave DomainLeave.HandleIndivServiceRequest_Finished()");
         }
 
         public void DomainLeaveProactively()
         {
-            Console.WriteLine("Enter DomainLeave.DomainLeaveProactively()");
+            Debug.WriteLine("Enter DomainLeave.DomainLeaveProactively()");
             try
             {
                 PlayReadyDomainLeaveServiceRequest domainLeaveRequest = new PlayReadyDomainLeaveServiceRequest();
@@ -58,16 +59,16 @@ namespace PlayReadyUAP
                 }
                 else
                 {
-                    Console.WriteLine("DomainLeaveProactively failed:" + ex.HResult);
+                    Debug.WriteLine("DomainLeaveProactively failed:" + ex.HResult);
                 }
             }
 
-            Console.WriteLine("Leave DomainLeave.DomainLeaveProactively()");
+            Debug.WriteLine("Leave DomainLeave.DomainLeaveProactively()");
         }
 
         async public void DomainLeaveReactively(PlayReadyDomainLeaveServiceRequest domainLeaveRequest)
         {
-            Console.WriteLine("Enter DomainLeave.DomainLeaveReactively()");
+            Debug.WriteLine("Enter DomainLeave.DomainLeaveReactively()");
             Exception exception = null;
 
             try
@@ -79,20 +80,20 @@ namespace PlayReadyUAP
 
                 if (RequestConfigData.ManualEnabling)
                 {
-                    Console.WriteLine("Manually posting the request...");
+                    Debug.WriteLine("Manually posting the request...");
 
                     HttpHelper httpHelper = new HttpHelper(domainLeaveRequest);
                     await httpHelper.GenerateChallengeAndProcessResponse();
                 }
                 else
                 {
-                    Console.WriteLine("Begin domain leave service request...");
+                    Debug.WriteLine("Begin domain leave service request...");
                     await domainLeaveRequest.BeginServiceRequest();
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Saving exception..");
+                Debug.WriteLine("Saving exception..");
                 exception = ex;
             }
             finally
@@ -100,7 +101,7 @@ namespace PlayReadyUAP
                 DomainLeaveServiceRequestCompleted(domainLeaveRequest, exception);
             }
 
-            Console.WriteLine("Leave DomainLeave.DomainLeaveReactively()");
+            Debug.WriteLine("Leave DomainLeave.DomainLeaveReactively()");
         }
     }
 
@@ -122,32 +123,32 @@ namespace PlayReadyUAP
 
         protected override void DomainLeaveServiceRequestCompleted(PlayReadyDomainLeaveServiceRequest sender, Exception hrCompletionStatus)
         {
-            Console.WriteLine("Enter DomainLeaveAndReportResult.DomainLeaveServiceRequestCompleted()");
+            Debug.WriteLine("Enter DomainLeaveAndReportResult.DomainLeaveServiceRequestCompleted()");
 
             if (hrCompletionStatus == null)
             {
-                Console.WriteLine("***Domain Leave succeeded***");
+                Debug.WriteLine("***Domain Leave succeeded***");
                 _reportResult(true, null);
             }
             else
             {
                 if (!PerformEnablingActionIfRequested(hrCompletionStatus))
                 {
-                    Console.WriteLine("DomainLeaveServiceRequestCompleted ERROR: " + hrCompletionStatus.ToString());
+                    Debug.WriteLine("DomainLeaveServiceRequestCompleted ERROR: " + hrCompletionStatus.ToString());
                     _reportResult(false, null);
                 }
             }
 
-            Console.WriteLine("Leave DomainLeaveAndReportResult.DomainLeaveServiceRequestCompleted()");
+            Debug.WriteLine("Leave DomainLeaveAndReportResult.DomainLeaveServiceRequestCompleted()");
         }
 
         protected override void EnablingActionCompleted(bool bResult)
         {
-            Console.WriteLine("Enter DomainLeaveAndReportResult.EnablingActionCompleted()");
+            Debug.WriteLine("Enter DomainLeaveAndReportResult.EnablingActionCompleted()");
 
             _reportResult(bResult, null);
 
-            Console.WriteLine("Leave DomainLeaveAndReportResult.EnablingActionCompleted()");
+            Debug.WriteLine("Leave DomainLeaveAndReportResult.EnablingActionCompleted()");
         }
 
     }

@@ -5,10 +5,8 @@
 ////
 //// Copyright (c) Microsoft Corporation. All rights reserved
 
-using System;
-using Windows.Foundation;
+using System.Diagnostics;
 using Windows.Media.Protection.PlayReady;
-using PlayReadyUAP;
 
 namespace PlayReadyUAP
 {
@@ -65,77 +63,77 @@ namespace PlayReadyUAP
             }
             else
             {
-                Console.WriteLine("ERROR: Unsupported serviceRequest " + _serviceRequest.GetType() );
+                Debug.WriteLine("ERROR: Unsupported serviceRequest " + _serviceRequest.GetType() );
             }
         }
         
         void HandleServiceRequest_Finished(bool bResult, object resultContext)
         {
-            Console.WriteLine("Enter RequestChain.HandleServiceRequest_Finished()" );
+            Debug.WriteLine("Enter RequestChain.HandleServiceRequest_Finished()" );
             
             _reportResult( bResult, null );
             
-            Console.WriteLine("Leave RequestChain.HandleServiceRequest_Finished()" );
+            Debug.WriteLine("Leave RequestChain.HandleServiceRequest_Finished()" );
         }
 
         void HandleIndivServiceRequest(PlayReadyIndividualizationServiceRequest serviceRequest)
         {
-            Console.WriteLine(" " );
-            Console.WriteLine("Enter RequestChain.HandleIndivServiceRequest()" );
+            Debug.WriteLine(" " );
+            Debug.WriteLine("Enter RequestChain.HandleIndivServiceRequest()" );
             
             _indivAndReportResult = new IndivAndReportResult( new ReportResultDelegate(HandleServiceRequest_Finished));
             _indivAndReportResult.RequestConfigData = _requestConfigData;
             _indivAndReportResult.IndivReactively( serviceRequest );
             
-            Console.WriteLine("Leave RequestChain.HandleIndivServiceRequest()" );
+            Debug.WriteLine("Leave RequestChain.HandleIndivServiceRequest()" );
         }
 
         void HandleLicenseAcquisitionServiceRequest(PlayReadyLicenseAcquisitionServiceRequest serviceRequest)
         {
-            Console.WriteLine(" " );
-            Console.WriteLine("Enter RequestChain.HandleLicenseAcquisitionServiceRequest()" );
+            Debug.WriteLine(" " );
+            Debug.WriteLine("Enter RequestChain.HandleLicenseAcquisitionServiceRequest()" );
             
             _licenseAcquisition = new LAAndReportResult( new ReportResultDelegate(HandleServiceRequest_Finished));
             _licenseAcquisition.RequestConfigData = _requestConfigData;
-            //_licenseAcquisition.AcquireLicenseReactively( serviceRequest);
-           // _licenseAcquisition.RequestLicenseManual(serviceRequest);
+            _licenseAcquisition.AcquireLicenseReactively( serviceRequest);
+            //_licenseAcquisition.RequestLicenseManual(serviceRequest);
 
-            Console.WriteLine("Leave RequestChain.HandleLicenseAcquisitionServiceRequest()" );
+            Debug.WriteLine("Leave RequestChain.HandleLicenseAcquisitionServiceRequest()" );
         }
         void HandleDomainJoinServiceRequest(PlayReadyDomainJoinServiceRequest serviceRequest)
         {
-            Console.WriteLine(" ");
-            Console.WriteLine("Enter RequestChain.HandleDomainJoinServiceRequest()");
+            Debug.WriteLine(" ");
+            Debug.WriteLine("Enter RequestChain.HandleDomainJoinServiceRequest()");
 
             _domainJoinAndReportResult = new DomainJoinAndReportResult(new ReportResultDelegate(HandleServiceRequest_Finished));
             _domainJoinAndReportResult.RequestConfigData = _requestConfigData;
             _domainJoinAndReportResult.DomainJoinReactively(serviceRequest);
 
-            Console.WriteLine("Leave RequestChain.HandleDomainJoinServiceRequest()");
+            Debug.WriteLine("Leave RequestChain.HandleDomainJoinServiceRequest()");
         }
 
         void HandleDomainLeaveServiceRequest(PlayReadyDomainLeaveServiceRequest serviceRequest)
         {
-            Console.WriteLine(" ");
-            Console.WriteLine("Enter RequestChain.HandleDomainLeaveServiceRequest()");
+            Debug.WriteLine(" ");
+            Debug.WriteLine("Enter RequestChain.HandleDomainLeaveServiceRequest()");
 
             _domainLeaveAndReportResult = new DomainLeaveAndReportResult(new ReportResultDelegate(HandleServiceRequest_Finished));
             _domainLeaveAndReportResult.RequestConfigData = _requestConfigData;
             _domainLeaveAndReportResult.DomainLeaveReactively(serviceRequest);
 
-            Console.WriteLine("Leave RequestChain.HandleDomainLeaveServiceRequest()");
+            Debug.WriteLine("Leave RequestChain.HandleDomainLeaveServiceRequest()");
         }
 
         void HandleRevocationServiceRequest(PlayReadyRevocationServiceRequest serviceRequest)
         {
-            Console.WriteLine(" ");
-            Console.WriteLine("Enter RequestChain.HandleRevocationServiceRequest()");
+            Debug.WriteLine(" ");
+            Debug.WriteLine("Enter RequestChain.HandleRevocationServiceRequest()");
 
             _revocationAndReportResult = new RevocationAndReportResult(new ReportResultDelegate(HandleServiceRequest_Finished));
             _revocationAndReportResult.RequestConfigData = _requestConfigData;
             _revocationAndReportResult.HandleRevocationReactively(serviceRequest);
 
-            Console.WriteLine("Leave RequestChain.HandleRevocationServiceRequest()");
+            Debug.WriteLine("Leave RequestChain.HandleRevocationServiceRequest()");
         }
     }
 }

@@ -6,14 +6,11 @@
 //// Copyright (c) Microsoft Corporation. All rights reserved
 
 using System;
-using Windows.UI;
-using Windows.UI.Core;
+using System.Diagnostics;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml;
-using Windows.Foundation;
 using Windows.Media.Protection;
 using Windows.Media.Protection.PlayReady;
-using PlayReadyUAP;
 
 namespace PlayReadyUAP
 {
@@ -65,17 +62,17 @@ namespace PlayReadyUAP
 
         void SetupProtectionManager(MediaElement mediaElement)
         {
-            Console.WriteLine("Enter Playback.SetupProtectionManager()");
+            Debug.WriteLine("Enter Playback.SetupProtectionManager()");
 
             _mediaElement = mediaElement;
 
-            Console.WriteLine("Creating protection system mappings...");
+            Debug.WriteLine("Creating protection system mappings...");
             _protectionManager = new MediaProtectionManager();
 
             _protectionManager.ComponentLoadFailed += new ComponentLoadFailedEventHandler(ProtectionManager_ComponentLoadFailed);
             _protectionManager.ServiceRequested += new ServiceRequestedEventHandler(ProtectionManager_ServiceRequested);
 
-            Console.WriteLine("Creating protection system mappings...");
+            Debug.WriteLine("Creating protection system mappings...");
             //Setup PlayReady as the ProtectionSystem to use by MF. 
             //The code here is mandatory and should be just copied directly over to the app
             Windows.Foundation.Collections.PropertySet cpSystems = new Windows.Foundation.Collections.PropertySet();
@@ -90,10 +87,10 @@ namespace PlayReadyUAP
             // Setup the container GUID that's in the PPSH box
             _protectionManager.Properties.Add("Windows.Media.Protection.MediaProtectionContainerGuid", "{9A04F079-9840-4286-AB92-E65BE0885F95}");
 
-            Console.WriteLine("Creating media extension manager...");
+            Debug.WriteLine("Creating media extension manager...");
             _extensions = new Windows.Media.MediaExtensionManager();
 
-            Console.WriteLine("Registering ByteStreamHandlers for PIFF content");
+            Debug.WriteLine("Registering ByteStreamHandlers for PIFF content");
             _extensions.RegisterByteStreamHandler("Microsoft.Media.AdaptiveStreaming.SmoothByteStreamHandler", ".ism", "text/xml");
             _extensions.RegisterByteStreamHandler("Microsoft.Media.AdaptiveStreaming.SmoothByteStreamHandler", ".ism", "application/vnd.ms-sstr+xml");
 
@@ -110,25 +107,25 @@ namespace PlayReadyUAP
 
                 if(UseSoftwareProtectionLayer  == 1)
                 {
-                    Console.WriteLine(" ");
-                    Console.WriteLine("***** Use Software Protection Layer ******");
+                    Debug.WriteLine(" ");
+                    Debug.WriteLine("***** Use Software Protection Layer ******");
                     _protectionManager.Properties.Add("Windows.Media.Protection.UseSoftwareProtectionLayer", true);
                 }
             }
 
             _mediaElement.ProtectionManager = _protectionManager;
 
-            Console.WriteLine("Leave Playback.SetProtectionManager()");
+            Debug.WriteLine("Leave Playback.SetProtectionManager()");
         }
 
         public void SetMediaSource(string strMediaPath,
                                    bool bPlayToEnd)
         {
-            Console.WriteLine("Enter Playback.SetMediaSource()");
+            Debug.WriteLine("Enter Playback.SetMediaSource()");
 
             if (_mediaElement == null)
             {
-                Console.WriteLine("_mediaElement is closed ");
+                Debug.WriteLine("_mediaElement is closed ");
                 return;
             }
 
@@ -147,14 +144,14 @@ namespace PlayReadyUAP
             HookEventHandlers();
             _mediaElement.Source = new Uri(_strMediaPath);
 
-            Console.WriteLine("Leave Playback.SetMediaSource()");
+            Debug.WriteLine("Leave Playback.SetMediaSource()");
         }
 
         public void LoadMedia(MediaElement mediaElement,
                                 string strMediaPath,
                                 bool bPlayToEnd)
         {
-            Console.WriteLine("Enter Playback.LoadMedia()");
+            Debug.WriteLine("Enter Playback.LoadMedia()");
 
             _bplayToEnd = bPlayToEnd;
             _mediaElement = mediaElement;
@@ -162,19 +159,19 @@ namespace PlayReadyUAP
 
             SetMediaSource(strMediaPath, bPlayToEnd);
 
-            Console.WriteLine("Leave Playback.LoadMedia()");
+            Debug.WriteLine("Leave Playback.LoadMedia()");
         }
 
         public void FullPlayback(MediaElement mediaElement, string strMediaPath)
         {
-            Console.WriteLine("Enter Playback.Play()");
+            Debug.WriteLine("Enter Playback.Play()");
 
             HookEventHandlers();            
             SetMediaSource(strMediaPath, true);
             
             if (_mediaElement == null)
             {
-                Console.WriteLine("mediaElement is closed ");
+                Debug.WriteLine("mediaElement is closed ");
                 return;
             }
             else
@@ -182,132 +179,132 @@ namespace PlayReadyUAP
                 _mediaElement.Play();
             }
 
-            Console.WriteLine("Leave Playback.Play()");
+            Debug.WriteLine("Leave Playback.Play()");
         }
 
         public void Play(bool bPlayToEnd)
         {
             _bplayToEnd = bPlayToEnd;
-            Console.WriteLine("Enter Playback.Play()");
+            Debug.WriteLine("Enter Playback.Play()");
             if (_mediaElement == null)
             {
-                Console.WriteLine("_mediaElement is closed ");
+                Debug.WriteLine("_mediaElement is closed ");
                 return;
             }
             else
             {
                 _mediaElement.Play();
             }
-            Console.WriteLine("Leave Playback.Play()");
+            Debug.WriteLine("Leave Playback.Play()");
         }
 
         public void Stop()
         {
-            Console.WriteLine("Enter Playback.Stop()");
+            Debug.WriteLine("Enter Playback.Stop()");
             if (_mediaElement == null)
             {
-                Console.WriteLine("_mediaElement is closed ");
+                Debug.WriteLine("_mediaElement is closed ");
                 return;
             }
             else
             {
                 _mediaElement.Stop();
             }
-            Console.WriteLine("Leave Playback.Stop()");
+            Debug.WriteLine("Leave Playback.Stop()");
         }
 
         public void Pause()
         {
-            Console.WriteLine("Enter Playback.Pause()");
+            Debug.WriteLine("Enter Playback.Pause()");
             if (_mediaElement == null)
             {
-                Console.WriteLine("_mediaElement is closed ");
+                Debug.WriteLine("_mediaElement is closed ");
                 return;
             }
             else
             {
                 _mediaElement.Pause();
             }
-            Console.WriteLine("Leave Playback.Pause()");
+            Debug.WriteLine("Leave Playback.Pause()");
         }
 
         public void Play(string strMediaPath)
         {
-            Console.WriteLine("Enter Playback.Play()" );
-            Console.WriteLine(strMediaPath);
+            Debug.WriteLine("Enter Playback.Play()" );
+            Debug.WriteLine(strMediaPath);
 
             _strMediaPath = strMediaPath;
 
             HookEventHandlers();
             _mediaElement.Source = new Uri( _strMediaPath );
             
-            Console.WriteLine("Leave Playback.Play()" );
+            Debug.WriteLine("Leave Playback.Play()" );
         }
 
         protected void CurrentStateChanged( object sender, RoutedEventArgs e )
         {
-            Console.WriteLine("CurrentState:" + ((MediaElement)sender).CurrentState);
+            Debug.WriteLine("CurrentState:" + ((MediaElement)sender).CurrentState);
         }
 
         virtual protected void MediaFailed(object sender, ExceptionRoutedEventArgs e)
         {
             UnhookEventHandlers();
-            Console.WriteLine("MediaFailed Source: " + ((MediaElement)sender).Source );
-            Console.WriteLine("Playback Failed");
-            Console.WriteLine("MediaFailed: " + e.ErrorMessage );
+            Debug.WriteLine("MediaFailed Source: " + ((MediaElement)sender).Source );
+            Debug.WriteLine("Playback Failed");
+            Debug.WriteLine("MediaFailed: " + e.ErrorMessage );
         }
 
         virtual protected void MediaEnded( object sender, RoutedEventArgs e )
         {
             UnhookEventHandlers();
-            Console.WriteLine("MediaEnded: " + ((MediaElement)sender).Source );
-            Console.WriteLine("Playback succeeded");
+            Debug.WriteLine("MediaEnded: " + ((MediaElement)sender).Source );
+            Debug.WriteLine("Playback succeeded");
         }
 
         virtual protected void MediaOpened( object sender, RoutedEventArgs e )
         {
-            Console.WriteLine("MediaOpened: " + ((MediaElement)sender).Source );
+            Debug.WriteLine("MediaOpened: " + ((MediaElement)sender).Source );
         }
 
         void ProtectionManager_ComponentLoadFailed( MediaProtectionManager sender, ComponentLoadFailedEventArgs e )
         {
-            Console.WriteLine("Enter Playback.ProtectionManager_ComponentLoadFailed()" );
-            Console.WriteLine( e.Information.ToString() );
+            Debug.WriteLine("Enter Playback.ProtectionManager_ComponentLoadFailed()" );
+            Debug.WriteLine( e.Information.ToString() );
             
             //  List the failing components - RevocationAndRenewalInformation
             for ( int i = 0; i < e.Information.Items.Count; i++ )
             {
-                Console.WriteLine(e.Information.Items[i].Name + "\nReasons=0x" + e.Information.Items[i].Reasons + "\n"
+                Debug.WriteLine(e.Information.Items[i].Name + "\nReasons=0x" + e.Information.Items[i].Reasons + "\n"
                                                     + "Renewal Id=" + e.Information.Items[i].RenewalId );
 
             }
             e.Completion.Complete( false );
-            Console.WriteLine("Leave Playback.ProtectionManager_ComponentLoadFailed()" );
+            Debug.WriteLine("Leave Playback.ProtectionManager_ComponentLoadFailed()" );
         }
 
         void ProtectionManager_ServiceRequested( MediaProtectionManager sender, ServiceRequestedEventArgs srEvent )
         {
-            Console.WriteLine("Enter Playback.ProtectionManager_ServiceRequested()" );
+            Debug.WriteLine("Enter Playback.ProtectionManager_ServiceRequested()" );
             
             _serviceCompletionNotifier = srEvent.Completion;
             IPlayReadyServiceRequest serviceRequest = ( IPlayReadyServiceRequest )srEvent.Request;
-            Console.WriteLine("Servie request type = " + serviceRequest.GetType());
+            Debug.WriteLine("Servie request type = " + serviceRequest.GetType());
 
             _requestChain = new RequestChain( serviceRequest );
             _requestChain.RequestConfigData = this.RequestConfigData;
             _requestChain.FinishAndReportResult( new ReportResultDelegate(HandleServiceRequest_Finished));
             
-            Console.WriteLine("Leave Playback.ProtectionManager_ServiceRequested()" );
+            Debug.WriteLine("Leave Playback.ProtectionManager_ServiceRequested()" );
         }
 
         void HandleServiceRequest_Finished(bool bResult, object resultContext)
         {
-            Console.WriteLine("Enter Playback.HandleServiceRequest_Finished()" );
+            Debug.WriteLine("Enter Playback.HandleServiceRequest_Finished()" );
             
-            Console.WriteLine("MediaProtectionServiceCompletion.Complete = " + bResult.ToString() );
+            Debug.WriteLine("MediaProtectionServiceCompletion.Complete = " + bResult.ToString() );
             _serviceCompletionNotifier.Complete( bResult );
             
-            Console.WriteLine("Leave Playback.HandleServiceRequest_Finished()" );
+            Debug.WriteLine("Leave Playback.HandleServiceRequest_Finished()" );
         }
         
     }
@@ -331,23 +328,23 @@ namespace PlayReadyUAP
 
         override protected void MediaOpened(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Enter PlaybackAndReportResult.MediaOpened()");
+            Debug.WriteLine("Enter PlaybackAndReportResult.MediaOpened()");
 
             base.MediaOpened(sender, e);
             
-            Console.WriteLine("!!!!debug:_bplayToEnd =" + _bplayToEnd );
+            Debug.WriteLine("!!!!debug:_bplayToEnd =" + _bplayToEnd );
             
             if (!_bplayToEnd)
             {
                 _reportResult(true, null);
             }
 
-            Console.WriteLine("Leave PlaybackAndReportResult.MediaOpened()");
+            Debug.WriteLine("Leave PlaybackAndReportResult.MediaOpened()");
         }
 
         override protected void MediaEnded( object sender, RoutedEventArgs e )
         {
-            Console.WriteLine("Enter PlaybackAndReportResult.MediaEnded()" );
+            Debug.WriteLine("Enter PlaybackAndReportResult.MediaEnded()" );
                         
             base.MediaEnded(sender, e);
             if (_bplayToEnd)
@@ -355,12 +352,12 @@ namespace PlayReadyUAP
                 _reportResult(true, null);
             }
 
-            Console.WriteLine("Leave PlaybackAndReportResult.MediaEnded()" );
+            Debug.WriteLine("Leave PlaybackAndReportResult.MediaEnded()" );
         }
         
         override protected void MediaFailed(object sender, ExceptionRoutedEventArgs e)
         {
-            Console.WriteLine("Enter PlaybackAndReportResult.MediaFailed()" );
+            Debug.WriteLine("Enter PlaybackAndReportResult.MediaFailed()" );
             
             base.MediaFailed(sender, e);
             
@@ -369,13 +366,13 @@ namespace PlayReadyUAP
             {
                 if ( e.ErrorMessage.ToLower().Contains( _strExpectedError.ToLower() ) )
                 {
-                    Console.WriteLine( "'" + e.ErrorMessage + "' Contains " + _strExpectedError + "  as expected" );
+                    Debug.WriteLine( "'" + e.ErrorMessage + "' Contains " + _strExpectedError + "  as expected" );
                     bHandled = true;
                 }
             }
             _reportResult( bHandled, null );
             
-            Console.WriteLine("Leave PlaybackAndReportResult.MediaFailed()" );
+            Debug.WriteLine("Leave PlaybackAndReportResult.MediaFailed()" );
         }
         
     }

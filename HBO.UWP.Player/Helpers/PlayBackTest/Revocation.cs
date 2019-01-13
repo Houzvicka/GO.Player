@@ -6,6 +6,7 @@
 //// Copyright (c) Microsoft Corporation. All rights reserved
 
 using System;
+using System.Diagnostics;
 using Windows.Foundation;
 using Windows.Media.Protection.PlayReady;
 using PlayReadyUAP;
@@ -16,25 +17,25 @@ namespace PlayReadyUAP
     {
         protected virtual void RevocationServiceRequestCompleted( PlayReadyRevocationServiceRequest  sender, Exception hrCompletionStatus ) 
         {
-            Console.WriteLine("RevocationServiceRequestCompleted");
+            Debug.WriteLine("RevocationServiceRequestCompleted");
 
             if (hrCompletionStatus != null)
             {
-                Console.WriteLine("RevocationServiceRequestCompleted failed with " + hrCompletionStatus.HResult);
+                Debug.WriteLine("RevocationServiceRequestCompleted failed with " + hrCompletionStatus.HResult);
             }
         }
 
         void HandleIndivServiceRequest_Finished(bool bResult, object resultContext)
         {
-            Console.WriteLine("Enter Revocation.HandleIndivServiceRequest_Finished()");
+            Debug.WriteLine("Enter Revocation.HandleIndivServiceRequest_Finished()");
 
-            Console.WriteLine("HandleIndivServiceRequest_Finished(): " + bResult.ToString());
+            Debug.WriteLine("HandleIndivServiceRequest_Finished(): " + bResult.ToString());
             if (bResult)
             {
                 HandleRevocationProactively();
             }
 
-            Console.WriteLine("Leave Revocation.HandleIndivServiceRequest_Finished()");
+            Debug.WriteLine("Leave Revocation.HandleIndivServiceRequest_Finished()");
         }
 
         public void  HandleRevocationProactively()
@@ -55,41 +56,41 @@ namespace PlayReadyUAP
                 }
                 else
                 {
-                    Console.WriteLine("HandleRevocationProactively failed:" + ex.HResult);
+                    Debug.WriteLine("HandleRevocationProactively failed:" + ex.HResult);
                 }
             }
         }
         async public void  HandleRevocationReactively(PlayReadyRevocationServiceRequest request)
         {
-            Console.WriteLine("Enter Revocation.HandleRevocationReactively()" );
+            Debug.WriteLine("Enter Revocation.HandleRevocationReactively()" );
             Exception exception = null;
             
             try
             {
                 _serviceRequest = request;
 
-                Console.WriteLine("Begin revocation service request..." );
+                Debug.WriteLine("Begin revocation service request..." );
                 await request.BeginServiceRequest();
             }
             catch ( Exception ex )
             {
-                Console.WriteLine("Saving exception.." );
+                Debug.WriteLine("Saving exception.." );
                 exception = ex;
             }
             finally
             {
-                Console.WriteLine("Post-RevocationServiceRequest Values:");
+                Debug.WriteLine("Post-RevocationServiceRequest Values:");
                 if( exception == null )
                 {
-                    Console.WriteLine("ResponseCustomData = " + request.ResponseCustomData);
-                    Console.WriteLine("ProtectionSystem   = " + request.ProtectionSystem.ToString());
-                    Console.WriteLine("Type = " + request.Type.ToString());
+                    Debug.WriteLine("ResponseCustomData = " + request.ResponseCustomData);
+                    Debug.WriteLine("ProtectionSystem   = " + request.ProtectionSystem.ToString());
+                    Debug.WriteLine("Type = " + request.Type.ToString());
                 }
                 
                 RevocationServiceRequestCompleted( request, exception );
             }
             
-            Console.WriteLine("Leave Revocation.HandleRevocationReactively()" );
+            Debug.WriteLine("Leave Revocation.HandleRevocationReactively()" );
         }
 
     }
@@ -104,32 +105,32 @@ namespace PlayReadyUAP
         
         protected override void RevocationServiceRequestCompleted( PlayReadyRevocationServiceRequest  sender, Exception hrCompletionStatus )
         {
-            Console.WriteLine("Enter RevocationAndReportResult.RevocationServiceRequestCompleted()" );
+            Debug.WriteLine("Enter RevocationAndReportResult.RevocationServiceRequestCompleted()" );
 
             if( hrCompletionStatus == null )
             {
-                Console.WriteLine("********************************************Revocation handling succeeded**************************************************");
+                Debug.WriteLine("********************************************Revocation handling succeeded**************************************************");
                 _reportResult( true, null );
             }
             else
             {
                 if( !PerformEnablingActionIfRequested(hrCompletionStatus) )
                 {
-                    Console.WriteLine( "RevocationServiceRequestCompleted ERROR: " + hrCompletionStatus.ToString());
+                    Debug.WriteLine( "RevocationServiceRequestCompleted ERROR: " + hrCompletionStatus.ToString());
                    _reportResult( false, null );
                 }
             }
             
-            Console.WriteLine("Leave RevocationAndReportResult.RevocationServiceRequestCompleted()" );
+            Debug.WriteLine("Leave RevocationAndReportResult.RevocationServiceRequestCompleted()" );
         }
         
         protected override void EnablingActionCompleted(bool bResult)
         {
-            Console.WriteLine("Enter RevocationAndReportResult.EnablingActionCompleted()" );
+            Debug.WriteLine("Enter RevocationAndReportResult.EnablingActionCompleted()" );
 
             _reportResult( bResult, null );
             
-            Console.WriteLine("Leave RevocationAndReportResult.EnablingActionCompleted()" );
+            Debug.WriteLine("Leave RevocationAndReportResult.EnablingActionCompleted()" );
         }
         
     }

@@ -10,5 +10,6 @@ namespace HBO.UWP.Player.Contracts
     {
         string CurrentDeviceId { get; set; }
         string Individualization { get; set; }
+        string TempUriTest { get; set; }
     }
 }

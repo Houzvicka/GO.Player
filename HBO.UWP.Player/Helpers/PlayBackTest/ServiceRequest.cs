@@ -8,6 +8,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
@@ -195,16 +196,16 @@ namespace PlayReadyUAP
         }
         protected bool PerformEnablingActionIfRequested(Exception ex)
         {
-            Console.WriteLine("Enter ServiceRequest.PerformEnablingActionIfRequested()" );
+            Debug.WriteLine("Enter ServiceRequest.PerformEnablingActionIfRequested()" );
             bool bPerformed = false;
             
             if ( IsEnablingActionRequested(ex) ) 
             {
-                Console.WriteLine("!!!NextServiceRequest is needed!!!");
+                Debug.WriteLine("!!!NextServiceRequest is needed!!!");
                 IPlayReadyServiceRequest nextServiceRequest = _serviceRequest.NextServiceRequest();
                 if( nextServiceRequest != null )
                 {
-                    Console.WriteLine("!!!Servicing next request..." );
+                    Debug.WriteLine("!!!Servicing next request..." );
                     
                     _requestChain = new RequestChain( nextServiceRequest);
                     _requestChain.RequestConfigData = _requestConfigData;
@@ -214,17 +215,17 @@ namespace PlayReadyUAP
                 }
             }
             
-            Console.WriteLine("Leave ServiceRequest.PerformEnablingActionIfRequested()" );
+            Debug.WriteLine("Leave ServiceRequest.PerformEnablingActionIfRequested()" );
             return bPerformed;
         }
         
         void RequestChain_Finished(bool bResult, object resultContext)
         {
-            Console.WriteLine("Enter ServiceRequest.RequestChain_Finished()" );
+            Debug.WriteLine("Enter ServiceRequest.RequestChain_Finished()" );
             
             EnablingActionCompleted( bResult );
             
-            Console.WriteLine("Leave ServiceRequest.RequestChain_Finished()" );
+            Debug.WriteLine("Leave ServiceRequest.RequestChain_Finished()" );
         }
         
     }

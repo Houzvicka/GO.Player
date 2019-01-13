@@ -32,6 +32,8 @@ namespace HBO.UWP.Player
         private IConfigService config;
         private ISettingsService settings;
 
+        private LoginResponse login;
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -47,12 +49,10 @@ namespace HBO.UWP.Player
 
         public void AddDefaultHeaders()
         {
-            httpClient.DefaultRequestHeaders.Add("User-Agent",
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134");
+            httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134");
             httpClient.DefaultRequestHeaders.Add("Accept", "*/*");
             httpClient.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.5");
             httpClient.DefaultRequestHeaders.Add("Referer", "https://www.hbogo.cz/");
-            //httpClient.DefaultRequestHeaders.Add("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
             httpClient.DefaultRequestHeaders.Add("Origin", "https://www.hbogo.cz");
             httpClient.DefaultRequestHeaders.Add("X-Requested-With", "XMLHttpRequest");
             httpClient.DefaultRequestHeaders.Add("GO-Language", "CES");
@@ -84,8 +84,7 @@ namespace HBO.UWP.Player
                 };
             }
 
-            LoginResponse login = await Login(config.HboAccountLoginUri, "houzvickajiri@gmail.com",
-                "primer.magnate.claptrap", 0, dev);
+            login = await Login(config.HboAccountLoginUri, "houzvickajiri@gmail.com", "primer.magnate.claptrap", 0, dev);
             if (login.Error == null)
             {
                 httpClient.DefaultRequestHeaders["GO-SessionId"] = login.SessionId.ToString();
@@ -94,23 +93,9 @@ namespace HBO.UWP.Player
             }
 
             Categories cats = await GetCategories(config.CategoriesUri);
-            var showD = await GetShowDetail(cats.Items.First().Container.Last().Contents.Items.First().ObjectUrl);
-            var playUrl = await GetPlayableLink(config.PurchaseUri, showD.ChildContents.Items.First().Id);
 
-            System.Uri mfestUri = new Uri(playUrl.Purchase.MediaUrl.AbsoluteUri + "/manifest");
-            
-            //new PRH().InitializeAdaptiveMediaSource(mfestUri, Element);
-            Playback plbk = new Playback(Element);
-            plbk.RequestConfigData = new ServiceRequestConfigData()
-            {
-                Uri = new Uri($"https://lic.drmtoday.com/license-proxy-headerauth/drmtoday/RightsManager.asmx?assetId={playUrl.Purchase.AssetId}&variantId={playUrl.Purchase.VariantId}"),
-                //ChallengeCustomData = Base64Helpers.Base64Encode("{\"userId\":\"" + login.Customer.Id + "\",\"sessionId\":\"" + playUrl.Purchase.PlayerSessionId + "\",\"merchant\":\"hboeurope\"}"),
-                //CustomArtibutes = new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>("x-dt-auth-token", playUrl.Purchase.AuthToken) }
-            };
-            //plbk.Play(mfestUri.ToString());
-
-            Element.Source = mfestUri;
-            Element.Play();
+            mListBox.ItemsSource = cats.Items;
+            mListBox.DisplayMemberPath = "Name";
         }
 
         public async Task<Registration> SilentRegister(Uri registrationUri)
@@ -158,6 +143,11 @@ namespace HBO.UWP.Player
 
         public async Task<ContentsItem> GetShowDetail(Uri showUri)
         {
+            if (showUri.ToString().Contains("xml"))
+            {
+                showUri = new Uri(showUri.ToString().Replace("xml", "json"));
+            }
+
             var response = await httpClient.GetAsync(showUri);
             return !response.IsSuccessStatusCode
                 ? null
@@ -172,6 +162,51 @@ namespace HBO.UWP.Player
             return !response.IsSuccessStatusCode
                 ? null
                 : JsonConvert.DeserializeObject<Video>(await response.Content.ReadAsStringAsync());
+        }
+
+        private async void MListBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ListBox lb && lb.SelectedItem is CategoriesItem i)
+            {
+                sListBox.ItemsSource = i.Container.First().Contents.Items;
+                sListBox.DisplayMemberPath = "Name";
+            }
+        }
+
+        private async void SListBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ListBox lb && lb.SelectedItem is ContentsItem c)
+            {
+                tListBox.ItemsSource = (await GetShowDetail(c.ObjectUrl)).ChildContents.Items;
+                tListBox.DisplayMemberPath = "Name";
+            }
+        }
+
+        private async void TListBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ListBox lb && lb.SelectedItem is ContentsItem p)
+            {
+                Video playUrl = await GetPlayableLink(config.PurchaseUri, p.Id);
+
+                Uri mfestUri = new Uri(playUrl.Purchase.MediaUrl.AbsoluteUri + "/manifest");
+
+                //new PRH().InitializeAdaptiveMediaSource(mfestUri, Element);
+                Playback plbk = new Playback(Element);
+                plbk.RequestConfigData = new ServiceRequestConfigData()
+                {
+                    Uri = new Uri($"https://lic.drmtoday.com/license-proxy-headerauth/drmtoday/RightsManager.asmx?assetId={playUrl.Purchase.AssetId}&variantId={playUrl.Purchase.VariantId}"),
+                    ChallengeCustomData = Base64Helpers.Base64Encode("{\"userId\":\"" + login.Customer.Id + "\",\"sessionId\":\"" + playUrl.Purchase.PlayerSessionId + "\",\"merchant\":\"hboeurope\"}"),
+                    CustomArtibutes = new List<KeyValuePair<string, string>>()
+                    {
+                        new KeyValuePair<string, string>("x-dt-auth-token", playUrl.Purchase.AuthToken),
+                        new KeyValuePair<string, string>("Origin", "https://www.hbogo.cz"),
+                    }
+                };
+                plbk.Play(mfestUri.ToString());
+
+                //Element.Source = mfestUri;
+                //Element.Play();
+            }
         }
     }
 }

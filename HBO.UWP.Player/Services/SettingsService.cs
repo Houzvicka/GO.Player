@@ -23,5 +23,12 @@ namespace HBO.UWP.Player.Services
             set { individualization.Value = value; }
         }
         private readonly LocalSetting<string> individualization = new LocalSetting<string>(nameof(Individualization));
+
+        public string TempUriTest
+        {
+            get { return tempUriTest.Value; }
+            set { tempUriTest.Value = value; }
+        }
+        private readonly LocalSetting<string> tempUriTest = new LocalSetting<string>(nameof(TempUriTest));
     }
 }

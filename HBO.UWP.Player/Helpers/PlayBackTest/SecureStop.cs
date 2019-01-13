@@ -10,6 +10,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Windows.Foundation;
 using Windows.Media.Protection.PlayReady;
 using System.Runtime.InteropServices;
@@ -36,34 +37,34 @@ namespace PlayReadyUAP
 
         protected virtual void SecureStopServiceRequestCompleted(PlayReadySecureStopServiceRequest sender, Exception hrCompletionStatus)
         {
-            Console.WriteLine("SecureStopServiceRequestCompleted");
+            Debug.WriteLine("SecureStopServiceRequestCompleted");
 
             if (hrCompletionStatus != null)
             {
-                Console.WriteLine("SecureStopServiceRequestCompleted failed with " + hrCompletionStatus.HResult);
+                Debug.WriteLine("SecureStopServiceRequestCompleted failed with " + hrCompletionStatus.HResult);
             }
         }
 
         void HandleIndivServiceRequest_Finished(bool bResult, object resultContext)
         {
-            Console.WriteLine("Enter SecureStop.HandleIndivServiceRequest_Finished()");
+            Debug.WriteLine("Enter SecureStop.HandleIndivServiceRequest_Finished()");
 
-            Console.WriteLine("HandleIndivServiceRequest_Finished(): " + bResult.ToString());
+            Debug.WriteLine("HandleIndivServiceRequest_Finished(): " + bResult.ToString());
 
             if (bResult)
             {
                 SecureStopProactively();
             }
 
-            Console.WriteLine("Leave SecureStop.HandleIndivServiceRequest_Finished()");
+            Debug.WriteLine("Leave SecureStop.HandleIndivServiceRequest_Finished()");
         }
 
         public void SecureStopProactively()
         {
-            Console.WriteLine("Enter SecureStop.SecureStopReportProactively()");
+            Debug.WriteLine("Enter SecureStop.SecureStopReportProactively()");
             try
             {
-                Console.WriteLine("Creating SecureStop report service request...");
+                Debug.WriteLine("Creating SecureStop report service request...");
 
                 PlayReadySecureStopIterable secureStopIterable = new PlayReadySecureStopIterable(_SecureStopCert);
 
@@ -83,37 +84,37 @@ namespace PlayReadyUAP
                 }
                 else
                 {
-                    Console.WriteLine("SecureStopProactively failed:" + ex.HResult);
+                    Debug.WriteLine("SecureStopProactively failed:" + ex.HResult);
                 }
             }
 
-            Console.WriteLine("Leave SecureStop.SecureStopReportProactively()");
+            Debug.WriteLine("Leave SecureStop.SecureStopReportProactively()");
         }
 
         void ConfigureServiceRequest()
         {
             PlayReadySecureStopServiceRequest SecureStopRequest = _serviceRequest as PlayReadySecureStopServiceRequest;
 
-            Console.WriteLine(" ");
-            Console.WriteLine("Configure SecureStop request to these values:");
+            Debug.WriteLine(" ");
+            Debug.WriteLine("Configure SecureStop request to these values:");
             if (RequestConfigData.Uri != null)
             {
-                Console.WriteLine("URL       :" + RequestConfigData.Uri.ToString());
+                Debug.WriteLine("URL       :" + RequestConfigData.Uri.ToString());
                 SecureStopRequest.Uri = RequestConfigData.Uri;
             }
 
             if (RequestConfigData.ChallengeCustomData != null && RequestConfigData.ChallengeCustomData != String.Empty)
             {
-                Console.WriteLine("ChallengeCustomData:" + RequestConfigData.ChallengeCustomData);
+                Debug.WriteLine("ChallengeCustomData:" + RequestConfigData.ChallengeCustomData);
                 SecureStopRequest.ChallengeCustomData = RequestConfigData.ChallengeCustomData;
             }
 
-            Console.WriteLine(" ");
+            Debug.WriteLine(" ");
         }
 
         async public void SecureStopReactively(PlayReadySecureStopServiceRequest SecureStopRequest)
         {
-            Console.WriteLine("Enter SecureStop.SecureStopReportReactively()");
+            Debug.WriteLine("Enter SecureStop.SecureStopReportReactively()");
             Exception exception = null;
 
             try
@@ -121,39 +122,39 @@ namespace PlayReadyUAP
                 _serviceRequest = SecureStopRequest;
                 ConfigureServiceRequest();
 
-                Console.WriteLine("ChallengeCustomData = " + SecureStopRequest.ChallengeCustomData);
+                Debug.WriteLine("ChallengeCustomData = " + SecureStopRequest.ChallengeCustomData);
                 if (RequestConfigData.ManualEnabling)
                 {
-                    Console.WriteLine("Manually posting the request...");
+                    Debug.WriteLine("Manually posting the request...");
 
                     HttpHelper httpHelper = new HttpHelper(SecureStopRequest);
                     await httpHelper.GenerateChallengeAndProcessResponse();
                 }
                 else
                 {
-                    Console.WriteLine("Begin SecureStop service request...");
+                    Debug.WriteLine("Begin SecureStop service request...");
                     await SecureStopRequest.BeginServiceRequest();
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Saving exception..");
+                Debug.WriteLine("Saving exception..");
                 exception = ex;
             }
             finally
             {
-                Console.WriteLine("Post-SecureStop Values:");
+                Debug.WriteLine("Post-SecureStop Values:");
                 if (exception == null)
                 {
-                    Console.WriteLine("ResponseCustomData = " + SecureStopRequest.ResponseCustomData);
-                    Console.WriteLine("ProtectionSystem   = " + SecureStopRequest.ProtectionSystem.ToString());
-                    Console.WriteLine("Type = " + SecureStopRequest.Type.ToString());
+                    Debug.WriteLine("ResponseCustomData = " + SecureStopRequest.ResponseCustomData);
+                    Debug.WriteLine("ProtectionSystem   = " + SecureStopRequest.ProtectionSystem.ToString());
+                    Debug.WriteLine("Type = " + SecureStopRequest.Type.ToString());
                 }
 
                 SecureStopServiceRequestCompleted(SecureStopRequest, exception);
             }
 
-            Console.WriteLine("Leave SecureStop.SecureStopReportReactively()");
+            Debug.WriteLine("Leave SecureStop.SecureStopReportReactively()");
         }
 
     }
@@ -171,50 +172,50 @@ namespace PlayReadyUAP
 
         protected override void SecureStopServiceRequestCompleted(PlayReadySecureStopServiceRequest SecureStopRequest, Exception hrCompletionStatus)
         {
-            Console.WriteLine("Enter SecureStopAndReportResult.SecureStopServiceRequestCompleted()");
+            Debug.WriteLine("Enter SecureStopAndReportResult.SecureStopServiceRequestCompleted()");
 
             if (hrCompletionStatus != null)
             {
                 if (PerformEnablingActionIfRequested(hrCompletionStatus) || HandleExpectedError(hrCompletionStatus))
                 {
-                    Console.WriteLine("Exception handled.");
+                    Debug.WriteLine("Exception handled.");
                 }
                 else
                 {
-                    Console.WriteLine("SecureStopServiceRequestCompleted ERROR: " + hrCompletionStatus.ToString());
+                    Debug.WriteLine("SecureStopServiceRequestCompleted ERROR: " + hrCompletionStatus.ToString());
                     _reportResult(false, null);
                 }
             }
 
-            Console.WriteLine("Leave SecureStopAndReportResult.SecureStopServiceRequestCompleted()");
+            Debug.WriteLine("Leave SecureStopAndReportResult.SecureStopServiceRequestCompleted()");
         }
 
         protected override void EnablingActionCompleted(bool bResult)
         {
-            Console.WriteLine("Enter SecureStopAndReportResult.EnablingActionCompleted()");
+            Debug.WriteLine("Enter SecureStopAndReportResult.EnablingActionCompleted()");
 
             _reportResult(bResult, null);
 
-            Console.WriteLine("Leave SecureStopAndReportResult.EnablingActionCompleted()");
+            Debug.WriteLine("Leave SecureStopAndReportResult.EnablingActionCompleted()");
         }
 
         protected override bool HandleExpectedError(Exception ex)
         {
-            Console.WriteLine("Enter SecureStopAndReportResult.HandleExpectedError() _bExpectError=" + _bExpectError);
+            Debug.WriteLine("Enter SecureStopAndReportResult.HandleExpectedError() _bExpectError=" + _bExpectError);
             bool bHandled = false;
 
             if (_bExpectError)
             {
-                Console.WriteLine(" ex.HResult= " + ex.HResult);
+                Debug.WriteLine(" ex.HResult= " + ex.HResult);
                 if (ex.HResult == DRM_E_NOMORE_DATA)
                 {
-                    Console.WriteLine("SecureStopAndReportResult.HandleExpectedError : Received DRM_E_NOMORE_DATA as expected");
+                    Debug.WriteLine("SecureStopAndReportResult.HandleExpectedError : Received DRM_E_NOMORE_DATA as expected");
                     bHandled = true;
                     _reportResult(true, null);
                 }
             }
                 
-            Console.WriteLine("Leave SecureStopAndReportResult.HandleExpectedError()");
+            Debug.WriteLine("Leave SecureStopAndReportResult.HandleExpectedError()");
             return bHandled;
         }
     }

@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HBO.UWP.Player", "HBO.UWP.P
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_Xbox|ARM = Debug_Xbox|ARM
+		Debug_Xbox|ARM64 = Debug_Xbox|ARM64
+		Debug_Xbox|x64 = Debug_Xbox|x64
+		Debug_Xbox|x86 = Debug_Xbox|x86
 		Debug|ARM = Debug|ARM
 		Debug|ARM64 = Debug|ARM64
 		Debug|x64 = Debug|x64
@@ -17,6 +21,18 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7730EDF6-34C3-418E-AF64-DD4A1CBDD6D6}.Debug_Xbox|ARM.ActiveCfg = Debug_Xbox|ARM
+		{7730EDF6-34C3-418E-AF64-DD4A1CBDD6D6}.Debug_Xbox|ARM.Build.0 = Debug_Xbox|ARM
+		{7730EDF6-34C3-418E-AF64-DD4A1CBDD6D6}.Debug_Xbox|ARM.Deploy.0 = Debug_Xbox|ARM
+		{7730EDF6-34C3-418E-AF64-DD4A1CBDD6D6}.Debug_Xbox|ARM64.ActiveCfg = Debug_Xbox|ARM64
+		{7730EDF6-34C3-418E-AF64-DD4A1CBDD6D6}.Debug_Xbox|ARM64.Build.0 = Debug_Xbox|ARM64
+		{7730EDF6-34C3-418E-AF64-DD4A1CBDD6D6}.Debug_Xbox|ARM64.Deploy.0 = Debug_Xbox|ARM64
+		{7730EDF6-34C3-418E-AF64-DD4A1CBDD6D6}.Debug_Xbox|x64.ActiveCfg = Debug_Xbox|x64
+		{7730EDF6-34C3-418E-AF64-DD4A1CBDD6D6}.Debug_Xbox|x64.Build.0 = Debug_Xbox|x64
+		{7730EDF6-34C3-418E-AF64-DD4A1CBDD6D6}.Debug_Xbox|x64.Deploy.0 = Debug_Xbox|x64
+		{7730EDF6-34C3-418E-AF64-DD4A1CBDD6D6}.Debug_Xbox|x86.ActiveCfg = Debug_Xbox|x86
+		{7730EDF6-34C3-418E-AF64-DD4A1CBDD6D6}.Debug_Xbox|x86.Build.0 = Debug_Xbox|x86
+		{7730EDF6-34C3-418E-AF64-DD4A1CBDD6D6}.Debug_Xbox|x86.Deploy.0 = Debug_Xbox|x86
 		{7730EDF6-34C3-418E-AF64-DD4A1CBDD6D6}.Debug|ARM.ActiveCfg = Debug|ARM
 		{7730EDF6-34C3-418E-AF64-DD4A1CBDD6D6}.Debug|ARM.Build.0 = Debug|ARM
 		{7730EDF6-34C3-418E-AF64-DD4A1CBDD6D6}.Debug|ARM.Deploy.0 = Debug|ARM

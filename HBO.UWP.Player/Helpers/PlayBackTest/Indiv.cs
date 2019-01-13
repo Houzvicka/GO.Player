@@ -6,6 +6,7 @@
 //// Copyright (c) Microsoft Corporation. All rights reserved
 
 using System;
+using System.Diagnostics;
 using Windows.Foundation;
 using Windows.Media.Protection.PlayReady;
 using PlayReadyUAP;
@@ -27,7 +28,7 @@ namespace PlayReadyUAP
         }
         public async void IndivReactively(PlayReadyIndividualizationServiceRequest indivRequest)
         {
-            Console.WriteLine("Enter Indiv.IndivReactively()" );
+            Debug.WriteLine("Enter Indiv.IndivReactively()" );
             Exception exception = null;
             
             try
@@ -35,12 +36,12 @@ namespace PlayReadyUAP
                 _serviceRequest = indivRequest;
                 SerivceRequestStatistics.IncIndivCount();
 
-                Console.WriteLine("Begin indiv service request..." );
+                Debug.WriteLine("Begin indiv service request..." );
                 await indivRequest.BeginServiceRequest();
             }
             catch ( Exception ex )
             {
-                Console.WriteLine("Saving exception.." );
+                Debug.WriteLine("Saving exception.." );
                 exception = ex;
             }
             finally
@@ -48,7 +49,7 @@ namespace PlayReadyUAP
                 IndivServiceRequestCompleted( indivRequest, exception );
             }
             
-            Console.WriteLine("Leave Indiv.IndivReactively()" );
+            Debug.WriteLine("Leave Indiv.IndivReactively()" );
         }
 
     }
@@ -64,12 +65,12 @@ namespace PlayReadyUAP
         
         protected override void IndivServiceRequestCompleted( PlayReadyIndividualizationServiceRequest  sender, Exception hrCompletionStatus )
         {
-            Console.WriteLine("Enter IndivAndReportResult.IndivServiceRequestCompleted()" );
+            Debug.WriteLine("Enter IndivAndReportResult.IndivServiceRequestCompleted()" );
 
             if( hrCompletionStatus == null )
             {
-                Console.WriteLine("***Indiv succeeded***");
-                Console.WriteLine("PlayReady security version " + Windows.Media.Protection.PlayReady.PlayReadyStatics.PlayReadySecurityVersion);
+                Debug.WriteLine("***Indiv succeeded***");
+                Debug.WriteLine("PlayReady security version " + Windows.Media.Protection.PlayReady.PlayReadyStatics.PlayReadySecurityVersion);
                 _reportResult( true, null );
             }
             else
@@ -77,21 +78,21 @@ namespace PlayReadyUAP
                 //needed for LA revoke->Re-Indiv->LA sequence
                 if( !PerformEnablingActionIfRequested(hrCompletionStatus) )
                 {
-                    Console.WriteLine( "IndivServiceRequestCompleted ERROR: " + hrCompletionStatus.ToString());
+                    Debug.WriteLine( "IndivServiceRequestCompleted ERROR: " + hrCompletionStatus.ToString());
                    _reportResult( false, null );
                 }
             }
             
-            Console.WriteLine("Leave IndivAndReportResult.IndivServiceRequestCompleted()" );
+            Debug.WriteLine("Leave IndivAndReportResult.IndivServiceRequestCompleted()" );
         }
         
         protected override void EnablingActionCompleted(bool bResult)
         {
-            Console.WriteLine("Enter IndivAndReportResult.EnablingActionCompleted()" );
+            Debug.WriteLine("Enter IndivAndReportResult.EnablingActionCompleted()" );
 
             _reportResult( bResult, null );
             
-            Console.WriteLine("Leave IndivAndReportResult.EnablingActionCompleted()" );
+            Debug.WriteLine("Leave IndivAndReportResult.EnablingActionCompleted()" );
         }
         
     }

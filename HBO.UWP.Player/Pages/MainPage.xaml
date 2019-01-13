@@ -9,6 +9,15 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <MediaElement x:Name="Element" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AreTransportControlsEnabled="True"></MediaElement>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <ListBox x:Name="mListBox" Grid.Column="0" SelectionChanged="MListBox_OnSelectionChanged" />
+        <ListBox x:Name="sListBox" Grid.Column="1" SelectionChanged="SListBox_OnSelectionChanged"  />
+        <ListBox x:Name="tListBox" Grid.Column="2" SelectionChanged="TListBox_OnSelectionChanged" />
+        <MediaElement x:Name="Element" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AreTransportControlsEnabled="True"></MediaElement>
     </Grid>
 </Page>

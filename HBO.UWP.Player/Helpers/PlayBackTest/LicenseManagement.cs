@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Foundation;
@@ -23,37 +24,37 @@ namespace PlayReadyUAP
 
         static public void DumpLicenseValues(PlayReadyLicense license)
         {
-            Console.WriteLine(" " );
-            Console.WriteLine("License values:" );
+            Debug.WriteLine(" " );
+            Debug.WriteLine("License values:" );
             
-            Console.WriteLine("FullyEvaluated  :" + license.FullyEvaluated.ToString() );
-            Console.WriteLine("UsableForPlay   :" + license.UsableForPlay.ToString() );
+            Debug.WriteLine("FullyEvaluated  :" + license.FullyEvaluated.ToString() );
+            Debug.WriteLine("UsableForPlay   :" + license.UsableForPlay.ToString() );
 
             if( license.ExpirationDate == null )
             {
-                Console.WriteLine("Expiration date  : Not specified" );
+                Debug.WriteLine("Expiration date  : Not specified" );
             }
             else
             {
-                Console.WriteLine("Expiration date  :" + license.ExpirationDate.ToString() );
+                Debug.WriteLine("Expiration date  :" + license.ExpirationDate.ToString() );
             }
-            Console.WriteLine("Expiration period after first play  :" + license.ExpireAfterFirstPlay );
+            Debug.WriteLine("Expiration period after first play  :" + license.ExpireAfterFirstPlay );
             
-            Console.WriteLine("DomainAccountId :" + license.DomainAccountID.ToString() );
-            Console.WriteLine("ChainDepth      :" + license.ChainDepth );
+            Debug.WriteLine("DomainAccountId :" + license.DomainAccountID.ToString() );
+            Debug.WriteLine("ChainDepth      :" + license.ChainDepth );
             for( uint i = 0; i < license.ChainDepth; i++ )
             {
                 Guid keyId = license.GetKIDAtChainDepth(i);
-                Console.WriteLine(String.Format(System.Globalization.CultureInfo.CurrentCulture, 
+                Debug.WriteLine(String.Format(System.Globalization.CultureInfo.CurrentCulture, 
                                       "KeyId at chain depth ( {0} ) : {1}", i, keyId.ToString() ));
             }
-            Console.WriteLine(" " );
+            Debug.WriteLine(" " );
             
         }
         
         static public  PlayReadyLicense FindSingleLicense( Guid keyId, string keyIdString, bool bFullyEvaluated )
         {
-            Console.WriteLine("Enter LicenseManagement.FindSingleLicense()" );
+            Debug.WriteLine("Enter LicenseManagement.FindSingleLicense()" );
             
             PlayReadyContentHeader contentHeader = new PlayReadyContentHeader(
                                                                                 keyId,
@@ -64,7 +65,7 @@ namespace PlayReadyUAP
                                                                                 String.Empty, 
                                                                                 Guid.Empty);
             
-            Console.WriteLine("Creating PlayReadyLicenseIterable..." );
+            Debug.WriteLine("Creating PlayReadyLicenseIterable..." );
             PlayReadyLicenseIterable licenseIterable = new PlayReadyLicenseIterable( contentHeader, bFullyEvaluated );
             foreach( PlayReadyLicense lic in licenseIterable )
             {
@@ -75,20 +76,20 @@ namespace PlayReadyUAP
             IEnumerable<IPlayReadyLicense> licenseEnumerable = licenseIterable;
             
             int licenseCount = Enumerable.Count<IPlayReadyLicense>( licenseEnumerable );
-            Console.WriteLine("License count  :" + licenseCount );
+            Debug.WriteLine("License count  :" + licenseCount );
             if( licenseCount > 0 )
             {
                 license = Enumerable.ElementAt<IPlayReadyLicense>( licenseEnumerable, 0 ) as PlayReadyLicense;
             }
             
-            Console.WriteLine("Leave LicenseManagement.FindSingleLicense()" );
+            Debug.WriteLine("Leave LicenseManagement.FindSingleLicense()" );
             
             return license;
         }
         
         static public  IPlayReadyLicense[] FindMultipleLicenses( Guid keyId, string keyIdString, bool bFullyEvaluated )
         {
-            Console.WriteLine("Enter LicenseManagement.FindMultipleLicenses()" );
+            Debug.WriteLine("Enter LicenseManagement.FindMultipleLicenses()" );
             
             PlayReadyContentHeader contentHeader = new PlayReadyContentHeader(
                                                                                 keyId,
@@ -99,7 +100,7 @@ namespace PlayReadyUAP
                                                                                 String.Empty, 
                                                                                 Guid.Empty);
             
-            Console.WriteLine("Creating PlayReadyLicenseIterable..." );
+            Debug.WriteLine("Creating PlayReadyLicenseIterable..." );
             PlayReadyLicenseIterable licenseIterable = new PlayReadyLicenseIterable( contentHeader, bFullyEvaluated );
             foreach( PlayReadyLicense lic in licenseIterable )
             {
@@ -110,21 +111,21 @@ namespace PlayReadyUAP
             IEnumerable<IPlayReadyLicense> licenseEnumerable = licenseIterable;
             
             int licenseCount = Enumerable.Count<IPlayReadyLicense>( licenseEnumerable );
-            Console.WriteLine("License count  :" + licenseCount );
+            Debug.WriteLine("License count  :" + licenseCount );
             if( licenseCount > 0 )
             {
                 licenses = Enumerable.ToArray<IPlayReadyLicense>( licenseEnumerable );
             }
             
-            Console.WriteLine("Leave LicenseManagement.FindMultipleLicenses()" );
+            Debug.WriteLine("Leave LicenseManagement.FindMultipleLicenses()" );
             
             return licenses;
         }
 
         static public async  Task DeleteLicenses( Guid keyId, string keyIdString, PlayReadyEncryptionAlgorithm algorithm )
         {
-            Console.WriteLine("Enter LicenseManagement.DeleteLicenses()" );
-            Console.WriteLine("PlayReadyEncryptionType = " + algorithm.ToString() );
+            Debug.WriteLine("Enter LicenseManagement.DeleteLicenses()" );
+            Debug.WriteLine("PlayReadyEncryptionType = " + algorithm.ToString() );
             
             PlayReadyContentHeader contentHeader = new PlayReadyContentHeader(
                                                                                 keyId,
@@ -135,10 +136,10 @@ namespace PlayReadyUAP
                                                                                 String.Empty, 
                                                                                 Guid.Empty);
             
-            Console.WriteLine("Deleting licenses..." );
+            Debug.WriteLine("Deleting licenses..." );
             await PlayReadyLicenseManagement.DeleteLicenses( contentHeader );
             
-            Console.WriteLine("Leave LicenseManagement.DeleteLicenses()" );
+            Debug.WriteLine("Leave LicenseManagement.DeleteLicenses()" );
             
         }
     }

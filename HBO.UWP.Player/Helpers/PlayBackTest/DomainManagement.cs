@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -22,29 +23,29 @@ namespace PlayReadyUAP
 
         static public void DumpDomainValues(PlayReadyDomain domain)
         {
-            Console.WriteLine(" " );
-            Console.WriteLine("Domain values:" );
+            Debug.WriteLine(" " );
+            Debug.WriteLine("Domain values:" );
             
-            Console.WriteLine("AccountId  :" + domain.AccountId.ToString() );
-            Console.WriteLine("ServiceId   :" + domain.ServiceId.ToString() );
+            Debug.WriteLine("AccountId  :" + domain.AccountId.ToString() );
+            Debug.WriteLine("ServiceId   :" + domain.ServiceId.ToString() );
             
-            Console.WriteLine("Revision  :" + domain.Revision );
-            Console.WriteLine("FriendlyName  :" + domain.FriendlyName );
+            Debug.WriteLine("Revision  :" + domain.Revision );
+            Debug.WriteLine("FriendlyName  :" + domain.FriendlyName );
 
             Uri uri = domain.DomainJoinUrl;
             if( uri != null )
             {
-                Console.WriteLine("DomainJoinUrl :" + uri.ToString() );
+                Debug.WriteLine("DomainJoinUrl :" + uri.ToString() );
             }
-            Console.WriteLine(" " );
+            Debug.WriteLine(" " );
             
         }
         
         static public  PlayReadyDomain FindSingleDomain( Guid guidAccountId )
         {
-            Console.WriteLine("Enter DomainManagement.FindSingleDomain()" );
+            Debug.WriteLine("Enter DomainManagement.FindSingleDomain()" );
                         
-            Console.WriteLine("Creating PlayReadyDomainIterable..." );
+            Debug.WriteLine("Creating PlayReadyDomainIterable..." );
             PlayReadyDomainIterable domainIterable = new PlayReadyDomainIterable( guidAccountId );
             foreach( PlayReadyDomain dom in domainIterable )
             {
@@ -55,22 +56,22 @@ namespace PlayReadyUAP
             IEnumerable<IPlayReadyDomain> domainEnumerable = domainIterable;
             
             int domainCount = Enumerable.Count<IPlayReadyDomain>( domainEnumerable );
-            Console.WriteLine("domain count  :" + domainCount );
+            Debug.WriteLine("domain count  :" + domainCount );
             if( domainCount > 0 )
             {
                 domain = Enumerable.ElementAt<IPlayReadyDomain>( domainEnumerable, 0 ) as PlayReadyDomain;
             }
             
-            Console.WriteLine("Leave DomainManagement.FindSingleDomain()" );
+            Debug.WriteLine("Leave DomainManagement.FindSingleDomain()" );
             
             return domain;
         }
         
         static public  IPlayReadyDomain[] FindMultipleDomains( Guid guidAccountId )
         {
-            Console.WriteLine("Enter DomainManagement.FindMultipleDomains()" );
+            Debug.WriteLine("Enter DomainManagement.FindMultipleDomains()" );
             
-            Console.WriteLine("Creating PlayReadyDomainIterable..." );
+            Debug.WriteLine("Creating PlayReadyDomainIterable..." );
             PlayReadyDomainIterable domainIterable = new PlayReadyDomainIterable( guidAccountId );
             foreach( PlayReadyDomain dom in domainIterable )
             {
@@ -81,13 +82,13 @@ namespace PlayReadyUAP
             IEnumerable<IPlayReadyDomain> domainEnumerable = domainIterable;
             
             int domainCount = Enumerable.Count<IPlayReadyDomain>( domainEnumerable );
-            Console.WriteLine("domain count  :" + domainCount );
+            Debug.WriteLine("domain count  :" + domainCount );
             if( domainCount > 0 )
             {
                 domains = Enumerable.ToArray<IPlayReadyDomain>( domainEnumerable );
             }
             
-            Console.WriteLine("Leave DomainManagement.FindMultipleDomains()" );
+            Debug.WriteLine("Leave DomainManagement.FindMultipleDomains()" );
             
             return domains;
         }

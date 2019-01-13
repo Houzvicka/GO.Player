@@ -1,20 +1,11 @@
-//// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-//// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-//// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-//// PARTICULAR PURPOSE.
-////
-//// Copyright (c) Microsoft Corporation. All rights reserved
-
 using System;
-using System.Net;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Media.Protection.PlayReady;
-using PlayReadyUAP;
 
 namespace PlayReadyUAP
 {
@@ -23,33 +14,36 @@ namespace PlayReadyUAP
         protected IPlayReadyServiceRequest _serviceRequest = null;
         Uri  _uri = null;
 
-        public HttpHelper( IPlayReadyServiceRequest serviceRequest)
+        private List<KeyValuePair<string, string>> customHeaders;
+
+        public HttpHelper( IPlayReadyServiceRequest serviceRequest, List<KeyValuePair<string, string>> customHeaders = null)
         {
             _serviceRequest = serviceRequest;
+            this.customHeaders = customHeaders;
         }
         
         public async Task GenerateChallengeAndProcessResponse()
         {
-            Console.WriteLine(" " );
-            Console.WriteLine("Enter HttpHelper.GenerateChallengeAndProcessResponse()" );
+            Debug.WriteLine(" " );
+            Debug.WriteLine("Enter HttpHelper.GenerateChallengeAndProcessResponse()" );
 
-            Console.WriteLine("Generating challenge.." );
+            Debug.WriteLine("Generating challenge.." );
             PlayReadySoapMessage soapMessage = _serviceRequest.GenerateManualEnablingChallenge();
             if( _uri == null )
             {
                 _uri = soapMessage.Uri;
             }
 
-            Console.WriteLine("Getting message body.." );
+            Debug.WriteLine("Getting message body.." );
             byte[] messageBytes = soapMessage.GetMessageBody();
             HttpContent httpContent = new ByteArrayContent( messageBytes );
 
             IPropertySet propertySetHeaders = soapMessage.MessageHeaders;
-            Console.WriteLine("Http Headers:-");
+            Debug.WriteLine("Http Headers:-");
             foreach( string strHeaderName in propertySetHeaders.Keys )
             {
                 string strHeaderValue = propertySetHeaders[strHeaderName].ToString();
-                Console.WriteLine(strHeaderName + " : " + strHeaderValue);
+                Debug.WriteLine(strHeaderName + " : " + strHeaderValue);
                 
                 // The Add method throws an ArgumentException try to set protected headers like "Content-Type"
                 // so set it via "ContentType" property
@@ -59,26 +53,36 @@ namespace PlayReadyUAP
                 }
                 else
                 {
-                    httpContent.Headers.Add(strHeaderName.ToString(), strHeaderValue);
+                    httpContent.Headers.Add(strHeaderName, strHeaderValue);
                 }
                 
             }
-            
-            Console.WriteLine("Http Body:-" );
-            Console.WriteLine(new System.Text.UTF8Encoding().GetString( messageBytes, 0, messageBytes.Length ));
+
+            if (customHeaders != null && customHeaders.Count >= 1)
+            {
+                foreach (KeyValuePair<string, string> header in customHeaders)
+                {
+                    httpContent.Headers.Add(header.Key, header.Value);
+                }
+            }
+
+            Debug.WriteLine("Http Body:-" );
+            Debug.WriteLine(new System.Text.UTF8Encoding().GetString( messageBytes, 0, messageBytes.Length ));
 
             HttpClient httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134");
             HttpResponseMessage response = await httpClient.PostAsync( _uri, httpContent );
             string strResponse = await response.Content.ReadAsStringAsync();
             
-            Console.WriteLine("Processing Response.." );
-            Exception exResult = _serviceRequest.ProcessManualEnablingResponse( await response.Content.ReadAsByteArrayAsync()) ;
-            if( exResult != null)
+            Debug.WriteLine("Processing Response.." );
+            Exception exResult = _serviceRequest.ProcessManualEnablingResponse( await response.Content.ReadAsByteArrayAsync());
+
+            if ( exResult != null)
             {
                 throw exResult;
             }
             
-            Console.WriteLine("Leave HttpHelper.GenerateChallengeAndProcessResponse()" );
+            Debug.WriteLine("Leave HttpHelper.GenerateChallengeAndProcessResponse()" );
         }
 
 
