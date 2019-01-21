@@ -10,5 +10,9 @@ namespace HBO.UWP.Player.Contracts
     {
         string CurrentDeviceId { get; set; }
         string Individualization { get; set; }
+        
+        string Username { get; set; }
+        string Password { get; set; }
+        int OperatorId { get; set; }
     }
 }

@@ -25,7 +25,7 @@ namespace HBO.UWP.Player.Model
         public long AgeRating { get; set; }
 
         [JsonProperty("AgeRatingName")]
-        public string AgeRatingName { get; set; }
+        public AgeRatingName AgeRatingName { get; set; }
 
         [JsonProperty("AllowFreePreview")]
         public bool AllowFreePreview { get; set; }
@@ -179,5 +179,8 @@ namespace HBO.UWP.Player.Model
         
         [JsonProperty("Subtitles", NullValueHandling = NullValueHandling.Ignore)]
         public List<Subtitle> Subtitles { get; set; }
+
+        [JsonProperty("Parent", NullValueHandling = NullValueHandling.Ignore)]
+        public ContentsItem Parent { get; set; }
     }
 }

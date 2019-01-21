@@ -5,9 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using HBO.UWP.Player.Contracts;
 using HBO.UWP.Player.Helpers;
 using HBO.UWP.Player.Helpers.Playback;
+using HBO.UWP.Player.Messages;
 using HBO.UWP.Player.Model;
 using HBO.UWP.Player.Pages;
 
@@ -36,35 +39,49 @@ namespace HBO.UWP.Player.ViewModel
         }
         private Categories currentCategories;
 
-        public Page CurrentPage
+        public CategoriesItem CurrentlySelectedCategory
         {
-            get { return currentPage; }
-            set { Set(ref currentPage, value); }
+            get { return currentlySelectedCategory; }
+            set { Set(ref currentlySelectedCategory, value); }
         }
-        private Page currentPage;
+        private CategoriesItem currentlySelectedCategory;
 
-        public PlayerPage PlayerPage
+        public ContentsItem CurrentlySelectedShow
         {
-            get { return playerPage; }
-            set { Set(ref playerPage, value); }
+            get { return currentlySelectedShow; }
+            set { Set(ref currentlySelectedShow, value); }
         }
-        private PlayerPage playerPage;
+        private ContentsItem currentlySelectedShow;
+
+        public ContentsItem CurrentlySelectedDetail
+        {
+            get { return currentlySelectedDetaily; }
+            set { Set(ref currentlySelectedDetaily, value); }
+        }
+        private ContentsItem currentlySelectedDetaily;
+
+        public Video CurrentlySelectedVideo
+        {
+            get { return currentlySelectedVideo; }
+            set { Set(ref currentlySelectedVideo, value); }
+        }
+        private Video currentlySelectedVideo;
 
         private IConfigService config;
         private ISettingsService settings;
         private ICommunicationService communication;
+        
+        public RelayCommand<object> PlayCommand => new RelayCommand<object>(PlayContent);
+        public RelayCommand<object> OpenDetailCommand => new RelayCommand<object>(LoadCurrentContent);
 
         public MainViewModel(IConfigService config, ISettingsService settings, ICommunicationService communication)
         {
             this.config = config;
             this.settings = settings;
             this.communication = communication;
-            
-            PlayerPage = new PlayerPage();
 
             RegisterOrLoadCurrentDevice();
             LoadCategories();
-            Login("houzvickajiri@gmail.com", "primer.magnate.claptrap", 0, CurrentDevice);
         }
 
         public async void RegisterOrLoadCurrentDevice()
@@ -85,7 +102,12 @@ namespace HBO.UWP.Player.ViewModel
                 };
             }
         }
-        
+
+        public async Task<LoginResponse> TryLogin(string login, string password)
+        {
+            return await communication.Login(config.HboAccountLoginUri, login, password, 0, CurrentDevice);
+        }
+
         public async void Login(string login, string password, int operatorId, CurrentDevice device)
         {
             CurrentUser = await communication.Login(config.HboAccountLoginUri, login, password, operatorId, device);
@@ -94,27 +116,54 @@ namespace HBO.UWP.Player.ViewModel
         public async void LoadCategories()
         {
             CurrentCategories = await communication.GetCategories(config.CategoriesUri);
+            CurrentlySelectedCategory = CurrentCategories.Items.FirstOrDefault();
         }
 
-        public async void LoadCurrentContent()
+        public async void LoadCurrentContent(object currentType)
         {
+            switch (currentType)
+            {
+                case CategoriesItem category:
+                    string url = category.ObjectUrl;
+                    url = url.Replace("{sort}", "0");
+                    url = url.Replace("{pageIndex}", "1");
+                    url = url.Replace("{pageSize}", "1024");
 
+                    CurrentlySelectedCategory = await communication.GetCategory(new Uri(url));
+
+                    Messenger.Default.Send(new NavigateMainFrameMessage(typeof(CategoryDetailPage)));
+                    break;
+                case ContentsItem content:
+                    switch (content.ContentType)
+                    {
+                        case 1L:
+                            CurrentlySelectedShow = content;
+
+                            Messenger.Default.Send(new NavigateMainFrameMessage(typeof(EpisodePage)));
+                            break;
+                        case 2L:
+                            CurrentlySelectedDetail = await communication.GetShowDetail(content.ObjectUrl);
+
+                            Messenger.Default.Send(new NavigateMainFrameMessage(typeof(DetailPage)));
+                            break;
+                        case 3L:
+                            CurrentlySelectedShow = content;
+
+                            Messenger.Default.Send(new NavigateMainFrameMessage(typeof(EpisodePage)));
+                            break;
+                    }
+                    break;
+            }
         }
 
-        public async void PlayContent(Guid showId)
+        public async void PlayContent(object show)
         {
-            NavigateToPlayerPage();
+            if (show is ContentsItem ci)
+            {
+                CurrentlySelectedVideo = await communication.GetPlayableLink(config.PurchaseUri, ci.Id, CurrentDevice.Individualization);
 
-            Video playUrl = await communication.GetPlayableLink(config.PurchaseUri, showId, CurrentDevice.Individualization);
-            Uri mfestUri = new Uri(playUrl.Purchase.MediaUrl.AbsoluteUri + "/manifest");
-
-            PlayerPage.SetupRequestConfigData(CurrentUser.Customer.Id, playUrl.Purchase);
-            PlayerPage.Play(mfestUri);
-        }
-
-        private void NavigateToPlayerPage()
-        {
-            CurrentPage = PlayerPage;
+                Messenger.Default.Send(new NavigateMainFrameMessage(typeof(PlayerPage)));
+            }
         }
     }
 }

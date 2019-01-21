@@ -23,5 +23,26 @@ namespace HBO.UWP.Player.Services
             set { individualization.Value = value; }
         }
         private readonly LocalSetting<string> individualization = new LocalSetting<string>(nameof(Individualization));
+
+        public string Username
+        {
+            get { return username.Value; }
+            set { username.Value = value; }
+        }
+        private readonly LocalSetting<string> username = new LocalSetting<string>(nameof(Username));
+
+        public string Password
+        {
+            get { return password.Value; }
+            set { password.Value = value; }
+        }
+        private readonly LocalSetting<string> password = new LocalSetting<string>(nameof(Password));
+
+        public int OperatorId
+        {
+            get { return operatorId.Value; }
+            set { operatorId.Value = value; }
+        }
+        private readonly LocalSetting<int> operatorId = new LocalSetting<int>(nameof(OperatorId));
     }
 }

@@ -15,13 +15,16 @@ using Windows.UI.Xaml.Navigation;
 using HBO.UWP.Player.Helpers;
 using HBO.UWP.Player.Helpers.Playback;
 using HBO.UWP.Player.Model;
+using HBO.UWP.Player.ViewModel;
 
 namespace HBO.UWP.Player.Pages
 {
     public sealed partial class PlayerPage : Page
     {
-        private Playback plbk;
+        private MainViewModel mvm => (MainViewModel)DataContext;
 
+        private Playback plbk;
+        
         public PlayerPage()
         {
             this.InitializeComponent();
@@ -43,9 +46,30 @@ namespace HBO.UWP.Player.Pages
             };
         }
 
-        public void Play(Uri mediaUri)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            plbk.Play(mediaUri);
+            base.OnNavigatedTo(e);
+
+            Play(mvm.CurrentlySelectedVideo);
+        }
+
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            base.OnNavigatingFrom(e);
+
+            Stop();
+        }
+
+        public void Play(Video currVid)
+        {
+            SetupRequestConfigData(mvm.CurrentUser.Customer.Id, currVid.Purchase);
+            var playUri = new Uri(currVid.Purchase.MediaUrl.AbsoluteUri + "/manifest");
+            plbk.Play(playUri);
+        }
+
+        public void Stop()
+        {
+            plbk.Stop();
         }
     }
 }

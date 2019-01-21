@@ -5,16 +5,29 @@
     xmlns:local="using:HBO.UWP.Player"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" DataContext="{Binding Main, Source={StaticResource Locator}}"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    DataContext="{Binding Main, Source={StaticResource Locator}}" Loaded="MainPage_OnLoaded"
+    mc:Ignorable="d" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
 
     <Grid>
-        <SplitView IsPaneOpen="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Button x:Name="HamburgerButton" Style="{StaticResource HamburgerButtonStyle}" Click="HamburgerButton_OnClick" Margin="25, 10" HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <AutoSuggestBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="25,10" PlaceholderText="Search" QueryIcon="Find" Width="200"
+                        TextChanged="AutoSuggestBox_TextChanged" QuerySubmitted="AutoSuggestBox_QuerySubmitted" SuggestionChosen="AutoSuggestBox_SuggestionChosen"/>
+        <SplitView Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" x:Name="mainMenu" PaneOpened="MainMenu_OnPaneOpened" PaneClosed="MainMenu_OnPaneClosed" >
             <SplitView.Pane>
-                <ListBox ItemsSource="{Binding CurrentCategories.Items}" DisplayMemberPath="Name" Margin="20" />
+                <ListBox x:Name="mainLixtBox" ItemsSource="{Binding CurrentCategories.Items}" DisplayMemberPath="Name" 
+                         SelectionMode="Single" SelectedItem="{Binding CurrentlySelectedCategory, Mode=TwoWay}" 
+                         Margin="20" Tapped="MainLixtBox_OnTapped" />
             </SplitView.Pane>
             <SplitView.Content>
-                <Frame Content="{Binding CurrentPage}" />
+                <Frame x:Name="mainFrame" />
             </SplitView.Content>
         </SplitView>
     </Grid>

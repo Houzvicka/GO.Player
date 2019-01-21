@@ -14,29 +14,29 @@ namespace HBO.UWP.Player.Services
 {
     public class CommunicationService : ICommunicationService
     {
-        HttpClient httpClient = new HttpClient(new HttpBaseProtocolFilter() { AllowAutoRedirect = false });
+        readonly HttpClient _httpClient = new HttpClient(new HttpBaseProtocolFilter() { AllowAutoRedirect = false });
 
         public CommunicationService()
         {
-            httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134");
-            httpClient.DefaultRequestHeaders.Add("Accept", "*/*");
-            httpClient.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.5");
-            httpClient.DefaultRequestHeaders.Add("Referer", "https://www.hbogo.cz/");
-            httpClient.DefaultRequestHeaders.Add("Origin", "https://www.hbogo.cz");
-            httpClient.DefaultRequestHeaders.Add("X-Requested-With", "XMLHttpRequest");
-            httpClient.DefaultRequestHeaders.Add("GO-Language", "CES");
-            httpClient.DefaultRequestHeaders.Add("GO-requiredPlatform", "CHBR");
-            httpClient.DefaultRequestHeaders.Add("GO-Token", "");
-            httpClient.DefaultRequestHeaders.Add("GO-SessionId", "");
-            httpClient.DefaultRequestHeaders.Add("GO-swVersion", "4.8.0");
-            httpClient.DefaultRequestHeaders.Add("GO-CustomerId", "");
-            httpClient.DefaultRequestHeaders.Add("Connection", "keep-alive");
-            httpClient.DefaultRequestHeaders.Add("Accept-Encoding", "");
+            _httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134");
+            _httpClient.DefaultRequestHeaders.Add("Accept", "*/*");
+            _httpClient.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.5");
+            _httpClient.DefaultRequestHeaders.Add("Referer", "https://www.hbogo.cz/");
+            _httpClient.DefaultRequestHeaders.Add("Origin", "https://www.hbogo.cz");
+            _httpClient.DefaultRequestHeaders.Add("X-Requested-With", "XMLHttpRequest");
+            _httpClient.DefaultRequestHeaders.Add("GO-Language", "CES");
+            _httpClient.DefaultRequestHeaders.Add("GO-requiredPlatform", "CHBR");
+            _httpClient.DefaultRequestHeaders.Add("GO-Token", "");
+            _httpClient.DefaultRequestHeaders.Add("GO-SessionId", "");
+            _httpClient.DefaultRequestHeaders.Add("GO-swVersion", "4.8.0");
+            _httpClient.DefaultRequestHeaders.Add("GO-CustomerId", "");
+            _httpClient.DefaultRequestHeaders.Add("Connection", "keep-alive");
+            _httpClient.DefaultRequestHeaders.Add("Accept-Encoding", "");
         }
 
         public async Task<Registration> SilentRegister(Uri registrationUri)
         {
-            var response = await httpClient.GetAsync(registrationUri);
+            var response = await _httpClient.GetAsync(registrationUri);
             return !response.IsSuccessStatusCode
                 ? null
                 : JsonConvert.DeserializeObject<Registration>(await response.Content.ReadAsStringAsync());
@@ -45,42 +45,61 @@ namespace HBO.UWP.Player.Services
         public async Task<LoginResponse> Login(Uri loginUri, string username, string password, int operatorId,
             CurrentDevice device)
         {
-            httpClient.DefaultRequestHeaders["Referer"] = "https://gateway.hbogo.eu";
-            httpClient.DefaultRequestHeaders["Origin"] = "https://gateway.hbogo.eu";
-
-            Login lg = new Login();
-
-            lg.Action = "L";
-            lg.Language = "CES";
-
-            lg.CurrentDevice = device;
-
-            lg.EmailAddress = username;
-            lg.Password = password;
-            lg.OperatorId = Operators.OperatorsList[operatorId];
-
-            var response = await httpClient.PostAsync(loginUri,
-                new HttpStringContent(JsonConvert.SerializeObject(lg), UnicodeEncoding.Utf8, "application/json"));
-
-            var login = !response.IsSuccessStatusCode
-                ? null
-                : JsonConvert.DeserializeObject<LoginResponse>(await response.Content.ReadAsStringAsync());
-
-            if (login != null && login.Error == null)
+            try
             {
-                httpClient.DefaultRequestHeaders["GO-SessionId"] = login.SessionId.ToString();
-                httpClient.DefaultRequestHeaders["GO-Token"] = login.Token;
-                httpClient.DefaultRequestHeaders["GO-CustomerId"] = login.Customer.Id.ToString();
-            }
+                _httpClient.DefaultRequestHeaders["Referer"] = "https://gateway.hbogo.eu";
+                _httpClient.DefaultRequestHeaders["Origin"] = "https://gateway.hbogo.eu";
 
-            return login;
+                Login lg = new Login();
+
+                lg.Action = "L";
+                lg.Language = "CES";
+
+                lg.CurrentDevice = device;
+
+                lg.EmailAddress = username;
+                lg.Password = password;
+                lg.OperatorId = Operators.OperatorsList[operatorId];
+
+                var jsonRequest = JsonConvert.SerializeObject(lg);
+                var requestContent = new HttpStringContent(jsonRequest, UnicodeEncoding.Utf8, "application/json");
+                var response = await _httpClient.PostAsync(loginUri, requestContent);
+
+                var login = !response.IsSuccessStatusCode
+                    ? null
+                    : JsonConvert.DeserializeObject<LoginResponse>(await response.Content.ReadAsStringAsync());
+
+                if (login != null && login.Error == null)
+                {
+                    _httpClient.DefaultRequestHeaders["GO-SessionId"] = login.SessionId.ToString();
+                    _httpClient.DefaultRequestHeaders["GO-Token"] = login.Token;
+                    _httpClient.DefaultRequestHeaders["GO-CustomerId"] = login.Customer.Id.ToString();
+                }
+
+                return login;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+
+                return null;
+            }
+        }
+
+        public async Task<CategoriesItem> GetCategory(Uri categoriesUri)
+        {
+            var response = await _httpClient.GetAsync(categoriesUri);
+
+            return !response.IsSuccessStatusCode
+                ? null
+                : JsonConvert.DeserializeObject<CategoriesItem>(await response.Content.ReadAsStringAsync());
         }
 
         public async Task<Categories> GetCategories(Uri categoriesUri)
         {
-            var response = await httpClient.GetAsync(categoriesUri);
+            var response = await _httpClient.GetAsync(categoriesUri);
 
-            response = await httpClient.GetAsync(new Uri(response.Headers["location"])); //catch redirect
+            response = await _httpClient.GetAsync(new Uri(response.Headers["location"])); //catch redirect
 
             return !response.IsSuccessStatusCode
                 ? null
@@ -94,7 +113,7 @@ namespace HBO.UWP.Player.Services
                 showUri = new Uri(showUri.ToString().Replace("xml", "json"));
             }
 
-            var response = await httpClient.GetAsync(showUri);
+            var response = await _httpClient.GetAsync(showUri);
             return !response.IsSuccessStatusCode
                 ? null
                 : JsonConvert.DeserializeObject<ContentsItem>(await response.Content.ReadAsStringAsync());
@@ -103,8 +122,8 @@ namespace HBO.UWP.Player.Services
         public async Task<Video> GetPlayableLink(Uri playUri, Guid showGuid, string individualization)
         {
             var context = new HttpStringContent(
-                $"<Purchase xmlns=\"go:v5:interop\"><AllowHighResolution>true</AllowHighResolution><ContentId>{showGuid.ToString()}</ContentId><CustomerId>{httpClient.DefaultRequestHeaders["GO-CustomerId"]}</CustomerId><Individualization>{individualization}</Individualization><OperatorId>{Operators.OperatorsList[0]}</OperatorId><ClientInfo></ClientInfo><IsFree>false</IsFree><UseInteractivity>false</UseInteractivity></Purchase>");
-            var response = await httpClient.PostAsync(playUri, context);
+                $"<Purchase xmlns=\"go:v5:interop\"><AllowHighResolution>true</AllowHighResolution><ContentId>{showGuid.ToString()}</ContentId><CustomerId>{_httpClient.DefaultRequestHeaders["GO-CustomerId"]}</CustomerId><Individualization>{individualization}</Individualization><OperatorId>{Operators.OperatorsList[0]}</OperatorId><ClientInfo></ClientInfo><IsFree>false</IsFree><UseInteractivity>false</UseInteractivity></Purchase>");
+            var response = await _httpClient.PostAsync(playUri, context);
             return !response.IsSuccessStatusCode
                 ? null
                 : JsonConvert.DeserializeObject<Video>(await response.Content.ReadAsStringAsync());
