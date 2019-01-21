@@ -9,7 +9,10 @@
 
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="400">
-            <TextBox x:Name="usernameTextBox" Margin="20" />
+            <TextBlock Text="Username: " Margin="20, 0" />
+            <TextBox x:Name="usernameTextBox" Margin="20,0,20,20" />
+
+            <TextBlock Text="Password: " Margin="20, 0" />
             <PasswordBox x:Name="passBox" Margin="20,0,20,20" />
             <ListBox x:Name="operatorBox" Visibility="Collapsed" />
 
