@@ -40,7 +40,7 @@ namespace GO.UWP.Player.Model
         public double AvailabilityFromUtc { get; set; }
 
         [JsonProperty("AvailabilityFromUtcIso")]
-        public DateTimeOffset AvailabilityFromUtcIso { get; set; }
+        public DateTimeOffset? AvailabilityFromUtcIso { get; set; }
 
         [JsonProperty("AvailabilityTo")]
         public string AvailabilityTo { get; set; }
@@ -49,7 +49,7 @@ namespace GO.UWP.Player.Model
         public double AvailabilityToUtc { get; set; }
 
         [JsonProperty("AvailabilityToUtcIso")]
-        public DateTimeOffset AvailabilityToUtcIso { get; set; }
+        public DateTimeOffset? AvailabilityToUtcIso { get; set; }
 
         [JsonProperty("BackgroundUrl")]
         public Uri BackgroundUrl { get; set; }

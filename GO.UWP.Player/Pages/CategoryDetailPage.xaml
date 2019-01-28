@@ -15,23 +15,19 @@
         <Grid x:Name="headerGrid">
             <TextBlock x:Name="showTitle" Text="{Binding CurrentlySelectedCategory.Name}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Foreground="White" FontSize="30" Margin="20"/>
         </Grid>
-        <GridView x:Name="detailsGridView" Grid.Row="1" ItemsSource="{Binding CurrentlySelectedCategory.Container[0].Contents.Items}" Margin="20" >
+        <GridView x:Name="detailsGridView" Grid.Row="1" ItemsSource="{Binding CurrentlySelectedCategory.Container[0].Contents.Items}" Margin="20" IsItemClickEnabled="True" ItemClick="DetailsGridView_OnItemClick" >
             <GridView.ItemTemplate>
                 <DataTemplate>
-                    <Button Width="200" Height="200" Margin="5" Command="{Binding ElementName=detailsGridView, Path=DataContext.OpenDetailCommand }" CommandParameter="{Binding}">
-                        <Button.Content>
-                            <Grid>
-                                <Grid.RowDefinitions>
+                    <Grid Width="200" Height="200" Margin="5">
+                        <Grid.RowDefinitions>
                                     <RowDefinition Height="2*" />
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
                                 <Image Grid.RowSpan="2" Source="{Binding BackgroundUrl}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Stretch="UniformToFill" />
-                                <Grid Grid.Row="1" Background="#33000000">
-                                    <TextBlock Text="{Binding Name}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Foreground="White" FontSize="15" Margin="20" TextWrapping="WrapWholeWords" />
-                                </Grid>
-                            </Grid>
-                        </Button.Content>
-                    </Button>
+                        <Grid Grid.Row="1" Background="#33000000">
+                            <TextBlock Text="{Binding Name}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Foreground="White" FontSize="15" Margin="12" TextWrapping="WrapWholeWords" />
+                        </Grid>
+                    </Grid>
                 </DataTemplate>
             </GridView.ItemTemplate>
         </GridView>
