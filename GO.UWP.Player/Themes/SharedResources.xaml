@@ -8,4 +8,5 @@
     <converters:BoolToVisibilityConverter x:Key="InvertedBoolToVisibility" VisibleWhenFalse="True" />
     <converters:ContentToVisibilityConverter x:Key="ContentToVisibility" />
     <converters:ContentToVisibilityConverter x:Key="InvertedContentToVisibility" VisibleWhenFalse="True" />
+    <converters:ValueToVisibilityConverter x:Key="ValueToVisibility" />
 </ResourceDictionary>

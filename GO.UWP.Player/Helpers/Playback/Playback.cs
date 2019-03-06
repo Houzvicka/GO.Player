@@ -1,5 +1,7 @@
 using System;
 using System.Diagnostics;
+using Windows.Media.Core;
+using Windows.Media.Playback;
 using Windows.Media.Protection;
 using Windows.Media.Protection.PlayReady;
 using Windows.UI.Xaml;
@@ -9,6 +11,7 @@ namespace GO.UWP.Player.Helpers.Playback
 {
     public class Playback
     {
+        private MediaSource _mediaSource = null;
         private MediaElement _mediaElement = null;
         Windows.Media.MediaExtensionManager _extensions = null;
         private MediaProtectionManager _protectionManager = null;
@@ -39,6 +42,8 @@ namespace GO.UWP.Player.Helpers.Playback
         
         public void HookEventHandlers()
         {
+            _mediaSource.OpenOperationCompleted += _mediaSource_OpenOperationCompleted;
+
             _mediaElement.CurrentStateChanged += new RoutedEventHandler( CurrentStateChanged );
             _mediaElement.MediaEnded += new RoutedEventHandler( MediaEnded );
             _mediaElement.MediaFailed += new ExceptionRoutedEventHandler( MediaFailed );
@@ -140,6 +145,40 @@ namespace GO.UWP.Player.Helpers.Playback
             Debug.WriteLine("Leave Playback.SetMediaSource()");
         }
 
+        private void _mediaSource_OpenOperationCompleted(MediaSource sender, MediaSourceOpenOperationCompletedEventArgs args)
+        {
+
+        }
+
+        public void SetMediaSource(MediaSource mediaSource,
+                                   bool bPlayToEnd)
+        {
+            Debug.WriteLine("Enter Playback.SetMediaSource()");
+
+            if (_mediaElement == null)
+            {
+                Debug.WriteLine("_mediaElement is closed ");
+                return;
+            }
+
+            _bplayToEnd = bPlayToEnd;
+            _mediaSource = mediaSource;
+
+            //
+            // In order to play Smooth Streaming content (e.g. PIFF_SuperSpeedway_720.ism at
+            // http://playready.directtaps.net/smoothstreaming/SSWSS720H264PR/SuperSpeedway_720.ism/Manifest)
+            // you need to add Microsoft Universal Smooth Streaming Client SDK to the project's References.
+            // If you haven't installed the SDK, you can download and install the SDK from
+            // https://visualstudiogallery.msdn.microsoft.com/1e7d4700-7fa8-49b6-8a7b-8d8666685459?SRC=Home.
+            // Also add Visual C++ 2015 Runtime for Universal Windows Platform Apps to the project's References
+            // if it hasn't been added.
+            //
+            HookEventHandlers();
+            _mediaElement.SetPlaybackSource(new MediaPlaybackItem(_mediaSource));
+
+            Debug.WriteLine("Leave Playback.SetMediaSource()");
+        }
+
         public void LoadMedia(MediaElement mediaElement,
                                 Uri mediaPath,
                                 bool bPlayToEnd)
@@ -153,6 +192,30 @@ namespace GO.UWP.Player.Helpers.Playback
             SetMediaSource(mediaPath, bPlayToEnd);
 
             Debug.WriteLine("Leave Playback.LoadMedia()");
+        }
+
+        public void LoadMediaToSource(MediaElement mediaElement,
+                                Uri mediaPath,
+                                bool bPlayToEnd)
+        {
+            Debug.WriteLine("Enter Playback.LoadMedia()");
+
+            _bplayToEnd = bPlayToEnd;
+            _mediaElement = mediaElement;
+            _mediaPath = mediaPath;
+
+            SetMediaSource(MediaSource.CreateFromUri(_mediaPath), bPlayToEnd);
+
+            Debug.WriteLine("Leave Playback.LoadMedia()");
+        }
+
+        public void AddExternalTimedTextSources(TimedTextSource timedTextSource)
+        {
+            Debug.WriteLine("Started adding TimedTextSource");
+
+            _mediaSource.ExternalTimedTextSources.Add(timedTextSource);
+
+            Debug.WriteLine("Ended adding TimedTextSource");
         }
 
         public void FullPlayback(MediaElement mediaElement, Uri mediaPath)

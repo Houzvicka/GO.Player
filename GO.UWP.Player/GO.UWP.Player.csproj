@@ -11,8 +11,8 @@
     <AssemblyName>GO.UWP.Player</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.17134.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.16299.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.17763.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -131,11 +131,9 @@
     <Compile Include="Contracts\ISettingsService.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\ContentToVisibilityConverter.cs" />
+    <Compile Include="Converters\ValueToVisibilityConverter.cs" />
     <Compile Include="Helpers\Base64Helpers.cs" />
     <Compile Include="Helpers\LocalSettings.cs" />
-    <Compile Include="Helpers\Playback\DomainJoin.cs" />
-    <Compile Include="Helpers\Playback\DomainLeave.cs" />
-    <Compile Include="Helpers\Playback\DomainManagement.cs" />
     <Compile Include="Helpers\Playback\HttpHelper.cs" />
     <Compile Include="Helpers\Playback\Indiv.cs" />
     <Compile Include="Helpers\Playback\LicenseAcquisition.cs" />
@@ -165,7 +163,7 @@
     <Compile Include="Model\Operators.cs" />
     <Compile Include="Model\ParentalControl.cs" />
     <Compile Include="Model\Purchase.cs" />
-    <Compile Include="Model\PurpleTracking.cs" />
+    <Compile Include="Model\ItemTracking.cs" />
     <Compile Include="Model\Registration.cs" />
     <Compile Include="Model\SortOption.cs" />
     <Compile Include="Model\Subtitle.cs" />

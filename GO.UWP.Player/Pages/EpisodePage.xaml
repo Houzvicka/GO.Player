@@ -27,7 +27,9 @@
             <TextBlock x:Name="showIngo" Text="{Binding CurrentlySelectedShow.Abstract}" HorizontalAlignment="Left" VerticalAlignment="Center" TextWrapping="WrapWholeWords" Foreground="White" FontSize="15" Margin="20"/>
         </Grid>
         <StackPanel Grid.Row="2" Orientation="Horizontal" Visibility="{Binding CurrentlySelectedShow.ContentType, Converter={StaticResource ContentToVisibility}}">
-            <Button Content="Play" Command="{Binding PlayCommand}" CommandParameter="{Binding CurrentlySelectedShow}" Margin="20" />
+            <Button x:Name="playBtn" Content="Play" Command="{Binding PlayCommand}" CommandParameter="{Binding CurrentlySelectedShow}" Margin="20" IsEnabled="{Binding CurrentlySelectedShow.AllowPlay}" VerticalAlignment="Center" />
+            <TextBlock Text="Dostupné od: " Margin="20" Visibility="{Binding CurrentlySelectedShow.AllowPlay, Converter={StaticResource InvertedBoolToVisibility}}" VerticalAlignment="Center" />
+            <TextBlock Text="{Binding CurrentlySelectedShow.AvailabilityFrom}" Margin="20" Visibility="{Binding CurrentlySelectedShow.AllowPlay, Converter={StaticResource InvertedBoolToVisibility}}" VerticalAlignment="Center" />
         </StackPanel>
     </Grid>
 </Page>

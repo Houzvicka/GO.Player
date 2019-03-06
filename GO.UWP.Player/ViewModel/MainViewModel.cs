@@ -41,6 +41,13 @@ namespace GO.UWP.Player.ViewModel
         }
         private CategoriesItem currentlySelectedCategory;
 
+        public CategoriesItem CurrentlySelectedMainPageCategory
+        {
+            get { return currentlySelectedMainPageCategory; }
+            set { Set(ref currentlySelectedMainPageCategory, value); }
+        }
+        private CategoriesItem currentlySelectedMainPageCategory;
+
         public ContentsItem CurrentlySelectedShow
         {
             get { return currentlySelectedShow; }
@@ -61,6 +68,13 @@ namespace GO.UWP.Player.ViewModel
             set { Set(ref currentlySelectedVideo, value); }
         }
         private Video currentlySelectedVideo;
+
+        public bool IsMainMenuPaneOpen
+        {
+            get { return isMainMenuPaneOpen; }
+            set { Set(ref isMainMenuPaneOpen, value); }
+        }
+        private bool isMainMenuPaneOpen;
 
         private IConfigService config;
         private ISettingsService settings;
@@ -111,7 +125,7 @@ namespace GO.UWP.Player.ViewModel
         public async void LoadCategories()
         {
             CurrentCategories = await communication.GetCategories(config.CategoriesUri);
-            CurrentlySelectedCategory = CurrentCategories.Items.FirstOrDefault();
+            CurrentlySelectedMainPageCategory = CurrentCategories.Items.FirstOrDefault();
         }
 
         public async void LoadCurrentContent(object currentType)
@@ -139,12 +153,19 @@ namespace GO.UWP.Player.ViewModel
                         case 2L:
                             CurrentlySelectedDetail = await communication.GetShowDetail(content.ObjectUrl);
 
+                            if (CurrentlySelectedDetail.Parent != null) CurrentlySelectedDetail = CurrentlySelectedDetail.Parent;
+
                             Messenger.Default.Send(new NavigateMainFrameMessage(typeof(DetailPage)));
                             break;
                         case 3L:
                             CurrentlySelectedShow = content;
 
                             Messenger.Default.Send(new NavigateMainFrameMessage(typeof(EpisodePage)));
+                            break;
+                        case 5L:
+                            CurrentlySelectedDetail = await communication.GetShowDetail(content.ObjectUrl);
+
+                            Messenger.Default.Send(new NavigateMainFrameMessage(typeof(DetailPage)));
                             break;
                     }
                     break;
@@ -153,7 +174,7 @@ namespace GO.UWP.Player.ViewModel
 
         public async void PlayContent(object show)
         {
-            if (show is ContentsItem ci)
+            if (show is ContentsItem ci && ci.AllowPlay)
             {
                 CurrentlySelectedVideo = await communication.GetPlayableLink(config.PurchaseUri, ci.Id, CurrentDevice.Individualization);
 

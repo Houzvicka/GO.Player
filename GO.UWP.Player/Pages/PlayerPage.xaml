@@ -9,6 +9,9 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <MediaElement x:Name="Element" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AreTransportControlsEnabled="True"></MediaElement>
+        <MediaPlayerElement x:Name="Element2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AreTransportControlsEnabled="True" />
+        <!-- <MediaElement x:Name="Element" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AreTransportControlsEnabled="True" /> -->
+
+        <!-- <ListBox x:Name="LangSelectLstBx" MaxHeight="100" MaxWidth="200" SelectionChanged="Selector_OnSelectionChanged" DisplayMemberPath="Name" HorizontalAlignment="Left" VerticalAlignment="Top" /> -->
     </Grid>
 </Page>

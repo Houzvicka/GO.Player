@@ -1,17 +1,23 @@
-﻿using Windows.UI.Xaml.Controls;
-
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
+﻿using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
+using CommonServiceLocator;
+using GO.UWP.Player.ViewModel;
 
 namespace GO.UWP.Player.Pages
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class DetailPage : Page
+    public sealed partial class DetailPage
     {
+        private MainViewModel main => (MainViewModel)DataContext;
+
         public DetailPage()
         {
             this.InitializeComponent();
+        }
+
+        private void DetailsGridView_OnItemClick(object sender, ItemClickEventArgs e)
+        {
+            main.OpenDetailCommand.Execute(e.ClickedItem);
         }
     }
 }

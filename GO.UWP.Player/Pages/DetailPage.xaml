@@ -9,9 +9,9 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="2*" />
+            <RowDefinition Height="0.25*" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
         <Grid x:Name="headerGrid">
             <Grid.Background>
@@ -21,33 +21,27 @@
                 </LinearGradientBrush>
             </Grid.Background>
             <Image Source="{Binding CurrentlySelectedDetail.BackgroundUrl}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Stretch="UniformToFill" />
-            <TextBlock x:Name="showTitle" Text="{Binding CurrentlySelectedDetail.Name}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Foreground="White" FontSize="30" Margin="20"/>
+            <TextBlock x:Name="showTitle" Text="{Binding CurrentlySelectedDetail.SeriesName}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Foreground="White" FontSize="30" Margin="20"/>
         </Grid>
         <Grid Grid.Row="1" x:Name="infoGrid">
-            <TextBlock x:Name="showIngo" Text="{Binding CurrentlySelectedDetail.Abstract}" HorizontalAlignment="Left" VerticalAlignment="Center" TextWrapping="WrapWholeWords" Foreground="White" FontSize="15" Margin="20"/>
+            <TextBlock x:Name="showIngo" Text="{Binding CurrentlySelectedDetail.Abstract}" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="WrapWholeWords" Foreground="White" FontSize="15" Margin="10"/>
         </Grid>
-        <ListView>
 
-        </ListView>
-
-
-        <GridView x:Name="detailsGridView" Grid.Row="2" ItemsSource="{Binding CurrentlySelectedDetail.ChildContents.Items}" Margin="20" Visibility="{Binding CurrentlySelectedDetail.ContentType, Converter={StaticResource InvertedContentToVisibility}}">
+        <GridView Grid.Row="2" x:Name="detailsGridView" ItemsSource="{Binding CurrentlySelectedDetail.ChildContents.Items}" 
+                  IsItemClickEnabled="True" ItemClick="DetailsGridView_OnItemClick"
+                  Margin="20" >
             <GridView.ItemTemplate>
                 <DataTemplate>
-                    <Button Width="200" Height="200" Margin="5" Command="{Binding ElementName=detailsGridView, Path=DataContext.OpenDetailCommand }" CommandParameter="{Binding}">
-                        <Button.Content>
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="2*" />
-                                    <RowDefinition Height="*" />
-                                </Grid.RowDefinitions>
-                                <Image Grid.RowSpan="2" Source="{Binding BackgroundUrl}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Stretch="UniformToFill" />
-                                <Grid Grid.Row="1" Background="#33000000">
-                                    <TextBlock Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Foreground="White" FontSize="15" Margin="20" TextWrapping="WrapWholeWords" />
-                                </Grid>
-                            </Grid>
-                        </Button.Content>
-                    </Button>
+                    <Grid Width="200" Height="200">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="2*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Image Grid.RowSpan="2" Source="{Binding BackgroundUrl}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Stretch="UniformToFill" />
+                        <Grid Grid.Row="1" Background="#33000000">
+                            <TextBlock Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Foreground="White" FontSize="15" Margin="20" TextWrapping="WrapWholeWords" />
+                        </Grid>
+                    </Grid>
                 </DataTemplate>
             </GridView.ItemTemplate>
         </GridView>

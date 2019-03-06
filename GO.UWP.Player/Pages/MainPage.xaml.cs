@@ -6,6 +6,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Navigation;
 using CommonServiceLocator;
 using GalaSoft.MvvmLight.Messaging;
 using GO.UWP.Player.Contracts;
@@ -16,7 +17,7 @@ namespace GO.UWP.Player.Pages
 {
     public sealed partial class MainPage
     {
-        private MainViewModel mvm => (MainViewModel) DataContext;
+        private MainViewModel main => (MainViewModel) DataContext;
         private ISettingsService settings;
 
         public MainPage()
@@ -33,6 +34,16 @@ namespace GO.UWP.Player.Pages
 
             Window.Current.CoreWindow.KeyDown += CoreWindow_KeyDown;
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
+
+            this.GotFocus += (object sender, RoutedEventArgs e) =>
+            {
+                FrameworkElement focus = FocusManager.GetFocusedElement() as FrameworkElement;
+                if (focus != null)
+                {
+                    Debug.WriteLine("got focus: " + focus.Name + " (" +
+                                    focus.GetType().ToString() + ")");
+                }
+            };
         }
 
         private void MainPage_OnLoaded(object sender, RoutedEventArgs e)
@@ -43,7 +54,7 @@ namespace GO.UWP.Player.Pages
             }
             else
             {
-                mvm.Login(settings.Username, settings.Password, 0, mvm.CurrentDevice);
+                main.Login(settings.Username, settings.Password, 0, main.CurrentDevice);
                 NavigateFrameTo(new NavigateMainFrameMessage(typeof(HomePage)));
             }
         }
@@ -52,7 +63,10 @@ namespace GO.UWP.Player.Pages
         {
             if (!mainFrame.CanGoBack) return;
             mainFrame.GoBack();
-            if (!mainFrame.CanGoBack) SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+            if (!mainFrame.CanGoBack)
+            {
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+            }
             e.Handled = true;
         }
 
@@ -62,6 +76,9 @@ namespace GO.UWP.Player.Pages
             if (obj.PageType == typeof(HomePage))
             {
                 mainFrame.BackStack.Clear();
+                //var element = FocusManager.FindFirstFocusableElement((Page)mainFrame.Content);
+                //FocusManager.TryFocusAsync(element, FocusState.Programmatic);
+
                 SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
             }
             else
@@ -70,84 +87,41 @@ namespace GO.UWP.Player.Pages
             }
         }
 
-        private void CoreWindow_KeyDown(CoreWindow sender, KeyEventArgs args)
+        private void CoreWindow_KeyDown(CoreWindow sender, KeyEventArgs e)
         {
-            if (args.Handled)
+            if (e.Handled)
             {
+                if (e.VirtualKey == VirtualKey.GamepadA && main.IsMainMenuPaneOpen)
+                {
+                    NavigateFrameTo(new NavigateMainFrameMessage(typeof(HomePage)));
+                    main.IsMainMenuPaneOpen = !main.IsMainMenuPaneOpen;
+                    e.Handled = true;
+                }
                 return;
             }
-            if (args.VirtualKey == VirtualKey.GamepadMenu)
+            if (e.VirtualKey == VirtualKey.GamepadMenu)
             {
-                mainMenu.IsPaneOpen = !mainMenu.IsPaneOpen;
+                main.IsMainMenuPaneOpen = !main.IsMainMenuPaneOpen;
                 Debug.WriteLine("Menu");
-                args.Handled = true;
+                e.Handled = true;
             }
-            if (args.VirtualKey == VirtualKey.GamepadB && mainMenu.IsPaneOpen)
+            if (e.VirtualKey == VirtualKey.GamepadB && main.IsMainMenuPaneOpen)
             {
-                mainMenu.IsPaneOpen = !mainMenu.IsPaneOpen;
+                main.IsMainMenuPaneOpen = !main.IsMainMenuPaneOpen;
                 Debug.WriteLine("Back");
-                args.Handled = true;
+                e.Handled = true;
             }
-            if (args.VirtualKey == VirtualKey.GamepadB)
+            if (e.VirtualKey == VirtualKey.GamepadB)
             {
                 if(mainFrame.CanGoBack) mainFrame.GoBack();
                 Debug.WriteLine("Back");
-                args.Handled = true;
+                e.Handled = true;
             }
-        }
-
-        private void HamburgerButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            mainMenu.IsPaneOpen = !mainMenu.IsPaneOpen;
-        }
-
-        private void MainMenu_OnPaneClosed(SplitView sender, object args)
-        {
-
-        }
-
-        private void MainMenu_OnPaneOpened(SplitView sender, object args)
-        {
-//            var first = mainLixtBox.Items?.FirstOrDefault();
-//            if (first != null && first is ListBoxItem lbi) lbi.Focus(FocusState.Programmatic);
-        }
-
-        private void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
-        {
-            // Only get results when it was a user typing, 
-            // otherwise assume the value got filled in by TextMemberPath 
-            // or the handler for SuggestionChosen.
-            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            if (e.VirtualKey == VirtualKey.Enter)
             {
-                //Set the ItemsSource to be your filtered dataset
-                //sender.ItemsSource = dataset;
+                FocusManager.TryMoveFocus(FocusNavigationDirection.Next);
+                e.Handled = true;
             }
-        }
-
-
-        private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
-        {
-            // Set sender.Text. You can use args.SelectedItem to build your text string.
-        }
-
-
-        private void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
-        {
-            if (args.ChosenSuggestion != null)
-            {
-                // User selected an item from the suggestion list, take an action on it here.
-            }
-            else
-            {
-                // Use args.QueryText to determine what to do.
-            }
-        }
-
-        private void MainLixtBox_OnTapped(object sender, TappedRoutedEventArgs e)
-        {
-            mainMenu.IsPaneOpen = !mainMenu.IsPaneOpen;
-            
-            NavigateFrameTo(new NavigateMainFrameMessage(typeof(HomePage)));
         }
     }
 }

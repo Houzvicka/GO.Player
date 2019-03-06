@@ -17,8 +17,6 @@ namespace GO.UWP.Player.Helpers.Playback
 
         IndivAndReportResult _indivAndReportResult  = null;
         LAAndReportResult _licenseAcquisition       = null;
-        DomainJoinAndReportResult _domainJoinAndReportResult = null;
-        DomainLeaveAndReportResult _domainLeaveAndReportResult = null;
         RevocationAndReportResult _revocationAndReportResult = null;
 
         ServiceRequestConfigData _requestConfigData = null;
@@ -48,14 +46,6 @@ namespace GO.UWP.Player.Helpers.Playback
             else if ( _serviceRequest is PlayReadyLicenseAcquisitionServiceRequest )
             {
                 HandleLicenseAcquisitionServiceRequest((PlayReadyLicenseAcquisitionServiceRequest)_serviceRequest);
-            }
-            else if ( _serviceRequest is PlayReadyDomainJoinServiceRequest )
-            {
-                HandleDomainJoinServiceRequest((PlayReadyDomainJoinServiceRequest)_serviceRequest);
-            }
-            else if ( _serviceRequest is PlayReadyDomainLeaveServiceRequest )
-            {
-                HandleDomainLeaveServiceRequest((PlayReadyDomainLeaveServiceRequest)_serviceRequest);
             }
             else if ( _serviceRequest is PlayReadyRevocationServiceRequest )
             {
@@ -99,29 +89,6 @@ namespace GO.UWP.Player.Helpers.Playback
             //_licenseAcquisition.RequestLicenseManual(serviceRequest);
 
             Debug.WriteLine("Leave RequestChain.HandleLicenseAcquisitionServiceRequest()" );
-        }
-        void HandleDomainJoinServiceRequest(PlayReadyDomainJoinServiceRequest serviceRequest)
-        {
-            Debug.WriteLine(" ");
-            Debug.WriteLine("Enter RequestChain.HandleDomainJoinServiceRequest()");
-
-            _domainJoinAndReportResult = new DomainJoinAndReportResult(new ReportResultDelegate(HandleServiceRequest_Finished));
-            _domainJoinAndReportResult.RequestConfigData = _requestConfigData;
-            _domainJoinAndReportResult.DomainJoinReactively(serviceRequest);
-
-            Debug.WriteLine("Leave RequestChain.HandleDomainJoinServiceRequest()");
-        }
-
-        void HandleDomainLeaveServiceRequest(PlayReadyDomainLeaveServiceRequest serviceRequest)
-        {
-            Debug.WriteLine(" ");
-            Debug.WriteLine("Enter RequestChain.HandleDomainLeaveServiceRequest()");
-
-            _domainLeaveAndReportResult = new DomainLeaveAndReportResult(new ReportResultDelegate(HandleServiceRequest_Finished));
-            _domainLeaveAndReportResult.RequestConfigData = _requestConfigData;
-            _domainLeaveAndReportResult.DomainLeaveReactively(serviceRequest);
-
-            Debug.WriteLine("Leave RequestChain.HandleDomainLeaveServiceRequest()");
         }
 
         void HandleRevocationServiceRequest(PlayReadyRevocationServiceRequest serviceRequest)

@@ -15,7 +15,8 @@
         <Grid x:Name="headerGrid">
             <TextBlock x:Name="showTitle" Text="{Binding CurrentlySelectedCategory.Name}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Foreground="White" FontSize="30" Margin="20"/>
         </Grid>
-        <GridView x:Name="detailsGridView" Grid.Row="1" ItemsSource="{Binding CurrentlySelectedCategory.Container[0].Contents.Items}" Margin="20" IsItemClickEnabled="True" ItemClick="DetailsGridView_OnItemClick" >
+        <GridView x:Name="detailsGridView" Grid.Row="1" ItemsSource="{Binding CurrentlySelectedCategory.Container[0].Contents.Items}" Margin="20"
+                  IsItemClickEnabled="True" ItemClick="DetailsGridView_OnItemClick" >
             <GridView.ItemTemplate>
                 <DataTemplate>
                     <Grid Width="200" Height="200" Margin="5">

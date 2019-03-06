@@ -6,98 +6,105 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" DataContext="{Binding Main, Source={StaticResource Locator}}" >
 
-    <Grid Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="50" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="50" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <TextBlock x:Name="titleTextBlock" Text="{Binding CurrentlySelectedCategory.Name, Mode=OneWay}" Grid.ColumnSpan="6" Margin="100,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="AntiqueWhite" FontSize="20" FontWeight="Bold" />
+    <NavigationView MenuItemsSource="{Binding CurrentCategories.Items}" IsPaneOpen="{Binding IsMainMenuPaneOpen}" SelectedItem="{Binding CurrentlySelectedMainPageCategory, Mode=TwoWay}" 
+                    PaneDisplayMode="Top" CompactPaneLength="0" Header="{Binding CurrentlySelectedMainPageCategory.Name, Mode=OneWay}" IsSettingsVisible="False" >
+        <NavigationView.MenuItemTemplate>
+            <DataTemplate>
+                <NavigationViewItem Content="{Binding Name}" />
+            </DataTemplate>
+        </NavigationView.MenuItemTemplate>
+        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="50" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-        <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5"
-                Command="{Binding OpenDetailCommand}" CommandParameter="{Binding CurrentlySelectedCategory.Container[0].Contents.Items[0]}">
-            <Button.Content>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="2*" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Image Grid.Row="0" Grid.RowSpan="2" Source="{Binding CurrentlySelectedCategory.Container[0].Contents.Items[0].BackgroundUrl, Mode=OneWay}" Stretch="UniformToFill" />
-                    <Grid Grid.Row="1" Background="#33000000">
-                        <TextBlock Text="{Binding CurrentlySelectedCategory.Container[0].Contents.Items[0].Name, Mode=OneWay}" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
+            <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" Padding="0" BorderThickness="0"
+                    Command="{Binding OpenDetailCommand}" CommandParameter="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[0]}">
+                <Button.Content>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="2*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Image Grid.Row="0" Grid.RowSpan="2" Source="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[0].BackgroundUrl, Mode=OneWay}" Stretch="UniformToFill" />
+                        <Grid Grid.Row="1" Background="#33000000">
+                            <TextBlock Text="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[0].Name, Mode=OneWay}" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
+                        </Grid>
                     </Grid>
-                </Grid>
-            </Button.Content>
-        </Button>
-        <Button Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5"
-                Command="{Binding OpenDetailCommand}" CommandParameter="{Binding CurrentlySelectedCategory.Container[0].Contents.Items[1]}">
-            <Button.Content>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="2*" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Image Grid.Row="0" Grid.RowSpan="2" Source="{Binding CurrentlySelectedCategory.Container[0].Contents.Items[1].BackgroundUrl, Mode=OneWay}" Stretch="UniformToFill" />
-                    <Grid Grid.Row="1" Background="#33000000">
-                        <TextBlock Text="{Binding CurrentlySelectedCategory.Container[0].Contents.Items[1].Name, Mode=OneWay}" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
+                </Button.Content>
+            </Button>
+            <Button Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" Padding="0" BorderThickness="0"
+                    Command="{Binding OpenDetailCommand}" CommandParameter="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[1]}">
+                <Button.Content>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="2*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Image Grid.Row="0" Grid.RowSpan="2" Source="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[1].BackgroundUrl, Mode=OneWay}" Stretch="UniformToFill" />
+                        <Grid Grid.Row="1" Background="#33000000">
+                            <TextBlock Text="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[1].Name, Mode=OneWay}" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
+                        </Grid>
                     </Grid>
-                </Grid>
-            </Button.Content>
-        </Button>
-        <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5"
-                Command="{Binding OpenDetailCommand}" CommandParameter="{Binding CurrentlySelectedCategory.Container[0].Contents.Items[2]}">
-            <Button.Content>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="2*" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Image Grid.Row="0" Grid.RowSpan="2" Source="{Binding CurrentlySelectedCategory.Container[0].Contents.Items[2].BackgroundUrl, Mode=OneWay}" Stretch="UniformToFill" />
-                    <Grid Grid.Row="1" Background="#33000000">
-                        <TextBlock Text="{Binding CurrentlySelectedCategory.Container[0].Contents.Items[2].Name, Mode=OneWay}" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
+                </Button.Content>
+            </Button>
+            <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" Padding="0" BorderThickness="0"
+                    Command="{Binding OpenDetailCommand}" CommandParameter="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[2]}">
+                <Button.Content>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="2*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Image Grid.Row="0" Grid.RowSpan="2" Source="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[2].BackgroundUrl, Mode=OneWay}" Stretch="UniformToFill" />
+                        <Grid Grid.Row="1" Background="#33000000">
+                            <TextBlock Text="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[2].Name, Mode=OneWay}" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
+                        </Grid>
                     </Grid>
-                </Grid>
-            </Button.Content>
-        </Button>
-        <Button Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5"
-                Command="{Binding OpenDetailCommand}" CommandParameter="{Binding CurrentlySelectedCategory.Container[0].Contents.Items[3]}">
-            <Button.Content>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="2*" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Image Grid.Row="0" Grid.RowSpan="2" Source="{Binding CurrentlySelectedCategory.Container[0].Contents.Items[3].BackgroundUrl, Mode=OneWay}" Stretch="UniformToFill" />
-                    <Grid Grid.Row="1" Background="#33000000">
-                        <TextBlock Text="{Binding CurrentlySelectedCategory.Container[0].Contents.Items[3].Name, Mode=OneWay}" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
+                </Button.Content>
+            </Button>
+            <Button Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" Padding="0" BorderThickness="0"
+                    Command="{Binding OpenDetailCommand}" CommandParameter="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[3]}">
+                <Button.Content>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="2*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Image Grid.Row="0" Grid.RowSpan="2" Source="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[3].BackgroundUrl, Mode=OneWay}" Stretch="UniformToFill" />
+                        <Grid Grid.Row="1" Background="#33000000">
+                            <TextBlock Text="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[3].Name, Mode=OneWay}" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
+                        </Grid>
                     </Grid>
-                </Grid>
-            </Button.Content>
-        </Button>
-        <Button Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5"
-                Command="{Binding OpenDetailCommand}" CommandParameter="{Binding CurrentlySelectedCategory.Container[0].Contents.Items[4]}">
-            <Button.Content>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="2*" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Image Grid.Row="0" Grid.RowSpan="2" Source="{Binding CurrentlySelectedCategory.Container[0].Contents.Items[4].BackgroundUrl, Mode=OneWay}" Stretch="UniformToFill" />
-                    <Grid Grid.Row="1" Background="#33000000">
-                        <TextBlock Text="{Binding CurrentlySelectedCategory.Container[0].Contents.Items[4].Name, Mode=OneWay}" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
+                </Button.Content>
+            </Button>
+            <Button Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" Padding="0" BorderThickness="0"
+                    Command="{Binding OpenDetailCommand}" CommandParameter="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[4]}">
+                <Button.Content>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="2*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Image Grid.Row="0" Grid.RowSpan="2" Source="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[4].BackgroundUrl, Mode=OneWay}" Stretch="UniformToFill" />
+                        <Grid Grid.Row="1" Background="#33000000">
+                            <TextBlock Text="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[4].Name, Mode=OneWay}" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
+                        </Grid>
                     </Grid>
-                </Grid>
-            </Button.Content>
-        </Button>
-        <Button Content="..." Grid.Row="3" Grid.Column="5" HorizontalAlignment="Right" Command="{Binding OpenDetailCommand}" CommandParameter="{Binding CurrentlySelectedCategory}" />
-    </Grid>
+                </Button.Content>
+            </Button>
+            <Button Content="..." Grid.Row="3" Grid.Column="5" HorizontalAlignment="Right" Command="{Binding OpenDetailCommand}" CommandParameter="{Binding CurrentlySelectedMainPageCategory}" />
+        </Grid>
+    </NavigationView>
 </Page>

@@ -151,7 +151,7 @@ namespace GO.UWP.Player.Model
         public string SeriesName { get; set; }
 
         [JsonProperty("Tracking")]
-        public PurpleTracking Tracking { get; set; }
+        public ItemTracking Tracking { get; set; }
 
         [JsonProperty("UseDisclaimer")]
         public bool UseDisclaimer { get; set; }
