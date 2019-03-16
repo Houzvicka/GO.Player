@@ -87,6 +87,8 @@ namespace GO.UWP.Player.Services
         {
             var response = await _httpClient.GetAsync(categoriesUri);
 
+            if(!response.IsSuccessStatusCode) response = await _httpClient.GetAsync(new Uri(response.Headers["location"])); //catch redirect
+
             return !response.IsSuccessStatusCode
                 ? null
                 : JsonConvert.DeserializeObject<CategoriesItem>(await response.Content.ReadAsStringAsync());
@@ -96,7 +98,7 @@ namespace GO.UWP.Player.Services
         {
             var response = await _httpClient.GetAsync(categoriesUri);
 
-            response = await _httpClient.GetAsync(new Uri(response.Headers["location"])); //catch redirect
+            if (!response.IsSuccessStatusCode) response = await _httpClient.GetAsync(new Uri(response.Headers["location"])); //catch redirect
 
             return !response.IsSuccessStatusCode
                 ? null
@@ -124,6 +126,19 @@ namespace GO.UWP.Player.Services
             return !response.IsSuccessStatusCode
                 ? null
                 : JsonConvert.DeserializeObject<Video>(await response.Content.ReadAsStringAsync());
+        }
+
+        public async Task<SearchResult> GetSearchResults(Uri searchUri, string searchQuery)
+        {
+            var response = await _httpClient.GetAsync(new Uri(searchUri + searchQuery + "/0"));
+
+            response = await _httpClient.GetAsync(new Uri(response.Headers["location"])); //catch redirect
+
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+
+            return !response.IsSuccessStatusCode
+                ? null
+                : JsonConvert.DeserializeObject<SearchResult>(await response.Content.ReadAsStringAsync());
         }
     }
 }

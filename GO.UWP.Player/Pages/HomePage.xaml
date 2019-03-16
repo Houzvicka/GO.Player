@@ -7,12 +7,18 @@
     mc:Ignorable="d" DataContext="{Binding Main, Source={StaticResource Locator}}" >
 
     <NavigationView MenuItemsSource="{Binding CurrentCategories.Items}" IsPaneOpen="{Binding IsMainMenuPaneOpen}" SelectedItem="{Binding CurrentlySelectedMainPageCategory, Mode=TwoWay}" 
-                    PaneDisplayMode="Top" CompactPaneLength="0" Header="{Binding CurrentlySelectedMainPageCategory.Name, Mode=OneWay}" IsSettingsVisible="False" >
+                    PaneDisplayMode="Top" CompactPaneLength="0" Header="{Binding CurrentlySelectedMainPageCategory.Name, Mode=OneWay}" IsSettingsVisible="False" IsBackButtonVisible="Collapsed" >
         <NavigationView.MenuItemTemplate>
             <DataTemplate>
                 <NavigationViewItem Content="{Binding Name}" />
             </DataTemplate>
         </NavigationView.MenuItemTemplate>
+        <NavigationView.AutoSuggestBox>
+            <AutoSuggestBox PlaceholderText="Search" QueryIcon="Find" Width="200"
+                            TextChanged="AutoSuggestBox_TextChanged" DisplayMemberPath="Name"
+                            QuerySubmitted="AutoSuggestBox_QuerySubmitted" ItemsSource="{Binding CurrentSearchSugestions}"
+                            SuggestionChosen="AutoSuggestBox_SuggestionChosen"/>
+        </NavigationView.AutoSuggestBox>
         <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="0" />

@@ -165,12 +165,16 @@
     <Compile Include="Model\Purchase.cs" />
     <Compile Include="Model\ItemTracking.cs" />
     <Compile Include="Model\Registration.cs" />
+    <Compile Include="Model\SearchResult.cs" />
     <Compile Include="Model\SortOption.cs" />
     <Compile Include="Model\Subtitle.cs" />
     <Compile Include="Model\Tracking.cs" />
     <Compile Include="Model\Video.cs" />
     <Compile Include="Pages\CategoryDetailPage.xaml.cs">
       <DependentUpon>CategoryDetailPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\CategoryPage.xaml.cs">
+      <DependentUpon>CategoryPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\DetailPage.xaml.cs">
       <DependentUpon>DetailPage.xaml</DependentUpon>
@@ -264,6 +268,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="Pages\CategoryDetailPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\CategoryPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

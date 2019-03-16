@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
@@ -76,6 +77,20 @@ namespace GO.UWP.Player.ViewModel
         }
         private bool isMainMenuPaneOpen;
 
+        public string CurrentSearchQuery
+        {
+            get { return currentSearchQuery; }
+            set { Set(ref currentSearchQuery, value); }
+        }
+        private string currentSearchQuery;
+
+        public List<ContentsItem> CurrentSearchSugestions
+        {
+            get { return currentSearchSugestions; }
+            set { Set(ref currentSearchSugestions, value); }
+        }
+        private List<ContentsItem> currentSearchSugestions;
+
         private IConfigService config;
         private ISettingsService settings;
         private ICommunicationService communication;
@@ -137,32 +152,38 @@ namespace GO.UWP.Player.ViewModel
                     url = url.Replace("{sort}", "0");
                     url = url.Replace("{pageIndex}", "1");
                     url = url.Replace("{pageSize}", "1024");
-
+                    
                     CurrentlySelectedCategory = await communication.GetCategory(new Uri(url));
 
+                    if(CurrentlySelectedCategory.Container.Count > 1) Messenger.Default.Send(new NavigateMainFrameMessage(typeof(CategoryPage)));
+                    else Messenger.Default.Send(new NavigateMainFrameMessage(typeof(CategoryDetailPage)));
+                    break;
+                case Container container:
+                    CurrentlySelectedCategory = await communication.GetCategory(container.ObjectUrl);
+                    
                     Messenger.Default.Send(new NavigateMainFrameMessage(typeof(CategoryDetailPage)));
                     break;
                 case ContentsItem content:
                     switch (content.ContentType)
                     {
-                        case 1L:
+                        case 1L: //Movie
                             CurrentlySelectedShow = content;
 
                             Messenger.Default.Send(new NavigateMainFrameMessage(typeof(EpisodePage)));
                             break;
-                        case 2L:
+                        case 2L: //Series
                             CurrentlySelectedDetail = await communication.GetShowDetail(content.ObjectUrl);
 
                             if (CurrentlySelectedDetail.Parent != null) CurrentlySelectedDetail = CurrentlySelectedDetail.Parent;
 
                             Messenger.Default.Send(new NavigateMainFrameMessage(typeof(DetailPage)));
                             break;
-                        case 3L:
+                        case 3L: //Episode
                             CurrentlySelectedShow = content;
 
                             Messenger.Default.Send(new NavigateMainFrameMessage(typeof(EpisodePage)));
                             break;
-                        case 5L:
+                        case 5L: //Episodes List
                             CurrentlySelectedDetail = await communication.GetShowDetail(content.ObjectUrl);
 
                             Messenger.Default.Send(new NavigateMainFrameMessage(typeof(DetailPage)));
@@ -170,6 +191,13 @@ namespace GO.UWP.Player.ViewModel
                     }
                     break;
             }
+        }
+
+        public async void Search(string searchQuery)
+        {
+            var response = await  communication.GetSearchResults(config.SearchUri, searchQuery);
+            if (response != null && response.Container[0].Success)
+                CurrentSearchSugestions = response.Container[0].Contents.Items;
         }
 
         public async void PlayContent(object show)
