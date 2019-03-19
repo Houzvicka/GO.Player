@@ -1,5 +1,10 @@
-﻿using Windows.UI.Xaml;
+﻿using System;
+using System.Linq;
+using Windows.System;
+using Windows.UI.ViewManagement;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 using GO.UWP.Player.ViewModel;
 using GO.UWP.Player.Model;
@@ -41,9 +46,9 @@ namespace GO.UWP.Player.Pages
 
         private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
-            if (sender is AutoSuggestBox && args.SelectedItem is ContentsItem ci)
+            if (sender is AutoSuggestBox asb && args.SelectedItem is ContentsItem ci)
             {
-                main.OpenDetailCommand.Execute(ci);
+                //asb.Text = ci.Name;
             }
         }
 
@@ -60,7 +65,19 @@ namespace GO.UWP.Player.Pages
             }
             else
             {
+//                if (sender is AutoSuggestBox asb)
+//                {
+//                    FocusManager.TryMoveFocus(FocusNavigationDirection.Down);
+//                }
                 // Use args.QueryText to determine what to do.
+            }
+        }
+
+        private void HomePage_OnKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.GamepadRightShoulder || e.Key == VirtualKey.GamepadLeftShoulder)
+            {
+                //mainNavigationView.items
             }
         }
     }

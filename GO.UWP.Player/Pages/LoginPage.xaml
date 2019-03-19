@@ -5,19 +5,26 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" DataContext="{Binding Main, Source={StaticResource Locator}}"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
 
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="400">
+            <Image Source="../Assets/logoLight.svg" Margin="100,40" />
+
             <TextBlock Text="Username: " Margin="20, 0" />
-            <TextBox x:Name="usernameTextBox" Margin="20,0,20,20" />
+            <TextBox x:Name="usernameTextBox" Margin="20,0,20,20" KeyDown="LoginPage_OnKeyDown" InputScope="EmailNameOrAddress" />
 
             <TextBlock Text="Password: " Margin="20, 0" />
-            <PasswordBox x:Name="passBox" Margin="20,0,20,20" />
-            <ListBox x:Name="operatorBox" Visibility="Collapsed" />
+            <PasswordBox x:Name="passBox" Margin="20,0,20,20" KeyDown="LoginPage_OnKeyDown" />
+
+            <TextBlock Text="Operator: " Margin="20, 0" />
+            <ComboBox x:Name="operatorBox" Margin="20,0,20,20" HorizontalAlignment="Stretch" />
 
             <Button Content="Login" Click="LoginButton_OnClick" HorizontalAlignment="Center" />
             <TextBlock x:Name="ErrorTextBlock" Foreground="Red" Margin="20" TextWrapping="WrapWholeWords" />
         </StackPanel>
+        <!-- <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#A1000000"> -->
+        <!--     <ProgressRing IsActive="True" MinWidth="200" MinHeight="200" /> -->
+        <!-- </Grid> -->
     </Grid>
 </Page>

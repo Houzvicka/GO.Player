@@ -54,7 +54,7 @@ namespace GO.UWP.Player.Pages
             }
             else
             {
-                main.Login(settings.Username, settings.Password, 0, main.CurrentDevice);
+                main.Login(settings.Username, settings.Password, settings.OperatorId, main.CurrentDevice);
                 NavigateFrameTo(new NavigateMainFrameMessage(typeof(HomePage)));
             }
         }

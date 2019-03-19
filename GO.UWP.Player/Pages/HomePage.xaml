@@ -4,22 +4,26 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" DataContext="{Binding Main, Source={StaticResource Locator}}" >
+    mc:Ignorable="d" DataContext="{Binding Main, Source={StaticResource Locator}}"
+    KeyDown="HomePage_OnKeyDown">
 
-    <NavigationView MenuItemsSource="{Binding CurrentCategories.Items}" IsPaneOpen="{Binding IsMainMenuPaneOpen}" SelectedItem="{Binding CurrentlySelectedMainPageCategory, Mode=TwoWay}" 
+    <NavigationView x:Name="mainNavigationView" MenuItemsSource="{Binding CurrentCategories.Items}" IsPaneOpen="{Binding IsMainMenuPaneOpen}" SelectedItem="{Binding CurrentlySelectedMainPageCategory, Mode=TwoWay}"
                     PaneDisplayMode="Top" CompactPaneLength="0" Header="{Binding CurrentlySelectedMainPageCategory.Name, Mode=OneWay}" IsSettingsVisible="False" IsBackButtonVisible="Collapsed" >
         <NavigationView.MenuItemTemplate>
             <DataTemplate>
                 <NavigationViewItem Content="{Binding Name}" />
             </DataTemplate>
         </NavigationView.MenuItemTemplate>
+        <NavigationView.PaneHeader>
+            <Image Source="../Assets/logoLight.svg" Margin="12, 6" />
+        </NavigationView.PaneHeader>
         <NavigationView.AutoSuggestBox>
             <AutoSuggestBox PlaceholderText="Search" QueryIcon="Find" Width="200"
-                            TextChanged="AutoSuggestBox_TextChanged" DisplayMemberPath="Name"
+                            TextChanged="AutoSuggestBox_TextChanged" DisplayMemberPath="Name" UpdateTextOnSelect="False"
                             QuerySubmitted="AutoSuggestBox_QuerySubmitted" ItemsSource="{Binding CurrentSearchSugestions}"
                             SuggestionChosen="AutoSuggestBox_SuggestionChosen"/>
         </NavigationView.AutoSuggestBox>
-        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="20">
+        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="20, 0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="0" />
                 <RowDefinition Height="*" />

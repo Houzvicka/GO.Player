@@ -11,7 +11,7 @@ namespace GO.UWP.Player.Contracts
         Task<CategoriesItem> GetCategory(Uri categoriesUri);
         Task<Categories> GetCategories(Uri categoriesUri);
         Task<ContentsItem> GetShowDetail(Uri showUri);
-        Task<Video> GetPlayableLink(Uri playUri, Guid showGuid, string individualization);
+        Task<Video> GetPlayableLink(Uri playUri, Guid showGuid, string individualization, int operatorGuidId);
         Task<SearchResult> GetSearchResults(Uri searchUri, string searchQuery);
     }
 }

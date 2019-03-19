@@ -127,9 +127,9 @@ namespace GO.UWP.Player.ViewModel
             }
         }
 
-        public async Task<LoginResponse> TryLogin(string login, string password)
+        public async Task<LoginResponse> TryLogin(string login, string password, int operatorId)
         {
-            return await communication.Login(config.HboAccountLoginUri, login, password, 0, CurrentDevice);
+            return await communication.Login(config.HboAccountLoginUri, login, password, operatorId, CurrentDevice);
         }
 
         public async void Login(string login, string password, int operatorId, CurrentDevice device)
@@ -204,7 +204,7 @@ namespace GO.UWP.Player.ViewModel
         {
             if (show is ContentsItem ci && ci.AllowPlay)
             {
-                CurrentlySelectedVideo = await communication.GetPlayableLink(config.PurchaseUri, ci.Id, CurrentDevice.Individualization);
+                CurrentlySelectedVideo = await communication.GetPlayableLink(config.PurchaseUri, ci.Id, CurrentDevice.Individualization, settings.OperatorId);
 
                 Messenger.Default.Send(new NavigateMainFrameMessage(typeof(PlayerPage)));
             }

@@ -56,7 +56,7 @@ namespace GO.UWP.Player.Services
 
                 lg.EmailAddress = username;
                 lg.Password = password;
-                lg.OperatorId = Operators.OperatorsList[operatorId];
+                lg.OperatorId = Operators.OperatorsList[operatorId].Item2;
 
                 var jsonRequest = JsonConvert.SerializeObject(lg);
                 var requestContent = new HttpStringContent(jsonRequest, UnicodeEncoding.Utf8, "application/json");
@@ -118,10 +118,10 @@ namespace GO.UWP.Player.Services
                 : JsonConvert.DeserializeObject<ContentsItem>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<Video> GetPlayableLink(Uri playUri, Guid showGuid, string individualization)
+        public async Task<Video> GetPlayableLink(Uri playUri, Guid showGuid, string individualization, int operatorGuidId)
         {
             var context = new HttpStringContent(
-                $"<Purchase xmlns=\"go:v5:interop\"><AllowHighResolution>true</AllowHighResolution><ContentId>{showGuid.ToString()}</ContentId><CustomerId>{_httpClient.DefaultRequestHeaders["GO-CustomerId"]}</CustomerId><Individualization>{individualization}</Individualization><OperatorId>{Operators.OperatorsList[0]}</OperatorId><ClientInfo></ClientInfo><IsFree>false</IsFree><UseInteractivity>false</UseInteractivity></Purchase>");
+                $"<Purchase xmlns=\"go:v5:interop\"><AllowHighResolution>true</AllowHighResolution><ContentId>{showGuid.ToString()}</ContentId><CustomerId>{_httpClient.DefaultRequestHeaders["GO-CustomerId"]}</CustomerId><Individualization>{individualization}</Individualization><OperatorId>{Operators.OperatorsList[operatorGuidId].Item2}</OperatorId><ClientInfo></ClientInfo><IsFree>false</IsFree><UseInteractivity>false</UseInteractivity></Purchase>");
             var response = await _httpClient.PostAsync(playUri, context);
             return !response.IsSuccessStatusCode
                 ? null

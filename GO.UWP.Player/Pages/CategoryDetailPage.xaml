@@ -19,14 +19,14 @@
                   IsItemClickEnabled="True" ItemClick="DetailsGridView_OnItemClick" >
             <GridView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Width="200" Height="200" Margin="5">
+                    <Grid Width="150" Height="150" Margin="5">
                         <Grid.RowDefinitions>
                                     <RowDefinition Height="2*" />
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
                                 <Image Grid.RowSpan="2" Source="{Binding BackgroundUrl}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Stretch="UniformToFill" />
                         <Grid Grid.Row="1" Background="#33000000">
-                            <TextBlock Text="{Binding Name}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Foreground="White" FontSize="15" Margin="12" TextWrapping="WrapWholeWords" />
+                            <TextBlock Text="{Binding Name}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Foreground="White" FontSize="15" Margin="10" TextWrapping="WrapWholeWords" />
                         </Grid>
                     </Grid>
                 </DataTemplate>

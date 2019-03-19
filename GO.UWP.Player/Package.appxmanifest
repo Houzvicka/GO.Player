@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="65084Twister.GOPlayer" Publisher="CN=99C91531-1DCF-4E24-9816-AE4E40005315" Version="0.2.6.0" />
+  <Identity Name="65084Twister.GOPlayer" Publisher="CN=99C91531-1DCF-4E24-9816-AE4E40005315" Version="0.2.8.0" />
   <mp:PhoneIdentity PhoneProductId="791f3636-48c2-466b-a446-7f1152b3f217" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>GO Player</DisplayName>

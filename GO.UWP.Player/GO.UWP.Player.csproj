@@ -234,7 +234,8 @@
     <Content Include="Assets\Large\Large310x310Logo.scale-150.png" />
     <Content Include="Assets\Large\Large310x310Logo.scale-200.png" />
     <Content Include="Assets\Large\Large310x310Logo.scale-400.png" />
-    <Content Include="Assets\logo.svg" />
+    <Content Include="Assets\logoDark.svg" />
+    <Content Include="Assets\logoLight.svg" />
     <Content Include="Assets\Medium\Medium150x150Logo.scale-100.png" />
     <Content Include="Assets\Medium\Medium150x150Logo.scale-125.png" />
     <Content Include="Assets\Medium\Medium150x150Logo.scale-150.png" />
