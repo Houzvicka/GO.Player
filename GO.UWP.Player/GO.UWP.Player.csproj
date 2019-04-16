@@ -176,6 +176,9 @@
     <Compile Include="Pages\CategoryPage.xaml.cs">
       <DependentUpon>CategoryPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\DebugPlayerPage.xaml.cs">
+      <DependentUpon>DebugPlayerPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\DetailPage.xaml.cs">
       <DependentUpon>DetailPage.xaml</DependentUpon>
     </Compile>
@@ -276,6 +279,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Pages\DebugPlayerPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\DetailPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -328,7 +335,16 @@
       <Name>Microsoft Universal Smooth Streaming Client SDK</Name>
     </SDKReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="X:\dev\universal\playerframework2\UWP.Xaml.Adaptive\Microsoft.PlayerFramework.Adaptive.csproj">
+      <Project>{953bf361-f4e0-4a3d-a465-fb9cf72af33c}</Project>
+      <Name>Microsoft.PlayerFramework.Adaptive</Name>
+    </ProjectReference>
+    <ProjectReference Include="X:\dev\universal\playerframework2\UWP.Xaml.Core\Microsoft.PlayerFramework.Core.csproj">
+      <Project>{84a3f824-24be-4e88-abae-f228e8a40f37}</Project>
+      <Name>Microsoft.PlayerFramework.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

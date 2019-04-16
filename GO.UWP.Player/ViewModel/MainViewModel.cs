@@ -206,7 +206,11 @@ namespace GO.UWP.Player.ViewModel
             {
                 CurrentlySelectedVideo = await communication.GetPlayableLink(config.PurchaseUri, ci.Id, CurrentDevice.Individualization, settings.OperatorId);
 
+#if DEBUG
+                Messenger.Default.Send(new NavigateMainFrameMessage(typeof(DebugPlayerPage)));
+#else
                 Messenger.Default.Send(new NavigateMainFrameMessage(typeof(PlayerPage)));
+#endif
             }
         }
     }
