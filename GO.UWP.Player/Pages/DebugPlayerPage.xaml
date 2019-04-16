@@ -9,5 +9,5 @@
     mc:Ignorable="d">
 
     <playerFramework:MediaPlayer x:Name="Player" IsAudioSelectionVisible="True" IsCaptionSelectionVisible="True" IsPauseEnabled="True" IsPlayPauseVisible="True"
-                                 IsAudioSelectionEnabled="True" IsCaptionSelectionEnabled="True" IsCaptionsActive="True" IsEnabled="True" />
+                                 IsAudioSelectionEnabled="True" IsCaptionSelectionEnabled="True" IsCaptionsActive="True" IsEnabled="True" AutoHideInterval="00:10:00" />
 </Page>

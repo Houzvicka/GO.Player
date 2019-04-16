@@ -336,11 +336,11 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="X:\dev\universal\playerframework2\UWP.Xaml.Adaptive\Microsoft.PlayerFramework.Adaptive.csproj">
+    <ProjectReference Include="..\UWP.Xaml.Adaptive\Microsoft.PlayerFramework.Adaptive.csproj">
       <Project>{953bf361-f4e0-4a3d-a465-fb9cf72af33c}</Project>
       <Name>Microsoft.PlayerFramework.Adaptive</Name>
     </ProjectReference>
-    <ProjectReference Include="X:\dev\universal\playerframework2\UWP.Xaml.Core\Microsoft.PlayerFramework.Core.csproj">
+    <ProjectReference Include="..\UWP.Xaml.Core\Microsoft.PlayerFramework.Core.csproj">
       <Project>{84a3f824-24be-4e88-abae-f228e8a40f37}</Project>
       <Name>Microsoft.PlayerFramework.Core</Name>
     </ProjectReference>
