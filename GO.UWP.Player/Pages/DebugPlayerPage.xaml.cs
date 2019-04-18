@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Windows.Media;
 using Windows.Foundation.Collections;
 using Windows.Media.Protection;
 using Windows.Media.Protection.PlayReady;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using GO.UWP.Player.Helpers;
 using GO.UWP.Player.Helpers.Playback;
@@ -165,7 +167,7 @@ namespace GO.UWP.Player.Pages
             _requestChain.FinishAndReportResult(new ReportResultDelegate(HandleServiceRequest_Finished));
 
             var result = false;
-
+            
             if (request.Type == PlayReadyStatics.IndividualizationServiceRequestType)
             {
                 result = await PlayReadyLicenseHandler.RequestIndividualizationToken(request as PlayReadyIndividualizationServiceRequest);
@@ -192,6 +194,24 @@ namespace GO.UWP.Player.Pages
             _serviceCompletionNotifier.Complete(bResult);
 
             Debug.WriteLine("Leave Playback.HandleServiceRequest_Finished()");
+        }
+
+        private void ButtonPlayPause_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (Player.CurrentState != MediaElementState.Paused) Player.Pause();
+            else Player.PlayResume();
+        }
+
+        private void ButtonAudioStream_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (Player.AvailableAudioStreams.Count > 1) Player.SelectedAudioStream = Player.AvailableAudioStreams.First(x => x != Player.SelectedAudioStream);
+        }
+
+        private void ButtonSubtitles_OnClick(object sender, RoutedEventArgs e)
+        {
+            Player.IsCaptionsActive = true;
+            if (Player.SelectedCaption == null && Player.AvailableCaptions.Count >= 1) Player.SelectedCaption = Player.AvailableCaptions.First();
+            else if (Player.AvailableCaptions.Count > 1) Player.SelectedCaption = Player.AvailableCaptions.First(x => x != Player.SelectedCaption);
         }
     }
 

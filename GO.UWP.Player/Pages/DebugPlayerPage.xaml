@@ -8,6 +8,16 @@
     xmlns:playerFramework="using:Microsoft.PlayerFramework"
     mc:Ignorable="d">
 
-    <playerFramework:MediaPlayer x:Name="Player" IsAudioSelectionVisible="True" IsCaptionSelectionVisible="True" IsPauseEnabled="True" IsPlayPauseVisible="True"
-                                 IsAudioSelectionEnabled="True" IsCaptionSelectionEnabled="True" IsCaptionsActive="True" IsEnabled="True" AutoHideInterval="00:10:00" />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <playerFramework:MediaPlayer x:Name="Player" AreTransportControlsEnabled="True" IsPlayPauseVisible="False" IsTimelineVisible="False" IsVolumeVisible="False"  />
+            <StackPanel Orientation="Horizontal" Grid.Row="1" Height="50">
+            <Button Content="play/pause" Click="ButtonPlayPause_OnClick" Margin="5" />
+            <Button Content="change audio stream" Click="ButtonAudioStream_OnClick" Margin="5" />
+            <Button Content="change subtitle stream" Click="ButtonSubtitles_OnClick" Margin="5" />
+        </StackPanel>
+    </Grid>
 </Page>
