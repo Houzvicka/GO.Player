@@ -28,8 +28,6 @@ namespace GO.UWP.Player.Pages
     {
         private MainViewModel mvm => (MainViewModel)DataContext;
 
-        private PlayerArguments arguments;
-
         public DebugPlayerPage()
         {
             this.InitializeComponent();
@@ -58,23 +56,12 @@ namespace GO.UWP.Player.Pages
 
             SetupRequestConfigData(mvm.CurrentUser.Customer.Id, mvm.CurrentlySelectedVideo.Purchase);
             var playUri = new Uri(mvm.CurrentlySelectedVideo.Purchase.MediaUrl.AbsoluteUri + "/manifest");
+            
+            InitializePlugins();
+            InitializeMediaExtensionManager();
+            InitializeMediaProtectionManager();
 
-            arguments = new PlayerArguments()
-            {
-                RightsManagerUrl = RequestConfigData.Uri.ToString(),
-                StreamUrl = playUri.ToString()
-            };
-
-            //arguments = e.Parameter as PlayerArguments;
-
-            if (arguments != null)
-            {
-                InitializePlugins();
-                InitializeMediaExtensionManager();
-                InitializeMediaProtectionManager();
-
-                Player.Source = new Uri(arguments.StreamUrl);
-            }
+            Player.Source = new Uri(playUri.ToString());
         }
 
         /// <summary>Initializes the Smooth Streaming plugin.</summary>
@@ -158,32 +145,31 @@ namespace GO.UWP.Player.Pages
         {
             Debug.WriteLine("ProtectionManager ServiceRequested");
 
-            var completionNotifier = e.Completion;
-            var request = (IPlayReadyServiceRequest)e.Request;
-
-
-            _requestChain = new RequestChain(request);
-            _requestChain.RequestConfigData = this.RequestConfigData;
-            _requestChain.FinishAndReportResult(new ReportResultDelegate(HandleServiceRequest_Finished));
+            _serviceCompletionNotifier = e.Completion;
+            IPlayReadyServiceRequest serviceRequest = (IPlayReadyServiceRequest)e.Request;
+            Debug.WriteLine("Servie request type = " + serviceRequest.GetType());
 
             var result = false;
             
-            if (request.Type == PlayReadyStatics.IndividualizationServiceRequestType)
+            if (serviceRequest.Type == PlayReadyStatics.IndividualizationServiceRequestType)
             {
-                result = await PlayReadyLicenseHandler.RequestIndividualizationToken(request as PlayReadyIndividualizationServiceRequest);
+                result = await PlayReadyLicenseHandler.RequestIndividualizationToken(serviceRequest as PlayReadyIndividualizationServiceRequest);
             }
-            else if (request.Type == PlayReadyStatics.LicenseAcquirerServiceRequestType)
+            else if (serviceRequest.Type == PlayReadyStatics.LicenseAcquirerServiceRequestType)
             {
                 // NOTE: You might need to set the request.ChallengeCustomData, depending on your Rights Manager.
-                if (!string.IsNullOrEmpty(arguments.RightsManagerUrl))
+                if (RequestConfigData != null)
                 {
-                    request.Uri = new Uri(arguments.RightsManagerUrl);
-                }
+                    _requestChain = new RequestChain(serviceRequest);
+                    _requestChain.RequestConfigData = this.RequestConfigData;
+                    _requestChain.FinishAndReportResult(HandleServiceRequest_Finished);
 
-                result = await PlayReadyLicenseHandler.RequestLicense(request as PlayReadyLicenseAcquisitionServiceRequest);
+                    return;
+                }
+                else result = await PlayReadyLicenseHandler.RequestLicense(serviceRequest as PlayReadyLicenseAcquisitionServiceRequest);
             }
 
-            completionNotifier.Complete(result);
+            _serviceCompletionNotifier.Complete(result);
         }
 
         void HandleServiceRequest_Finished(bool bResult, object resultContext)
@@ -213,13 +199,6 @@ namespace GO.UWP.Player.Pages
             if (Player.SelectedCaption == null && Player.AvailableCaptions.Count >= 1) Player.SelectedCaption = Player.AvailableCaptions.First();
             else if (Player.AvailableCaptions.Count > 1) Player.SelectedCaption = Player.AvailableCaptions.First(x => x != Player.SelectedCaption);
         }
-    }
-
-    public class PlayerArguments
-    {
-        public string StreamUrl { get; set; }
-
-        public string RightsManagerUrl { get; set; }
     }
 }
 
