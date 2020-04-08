@@ -14,6 +14,7 @@ using GO.UWP.Player.Helpers;
 using GO.UWP.Player.Helpers.Playback;
 using GO.UWP.Player.Model;
 using GO.UWP.Player.ViewModel;
+using Microsoft.PlayerFramework;
 using Microsoft.PlayerFramework.Adaptive;
 using PlayReadySample;
 

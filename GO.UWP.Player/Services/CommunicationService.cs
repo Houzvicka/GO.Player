@@ -16,7 +16,7 @@ namespace GO.UWP.Player.Services
         public CommunicationService()
         {
             _httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134");
-            _httpClient.DefaultRequestHeaders.Add("Accept", "*/*");
+            _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
             _httpClient.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.5");
             _httpClient.DefaultRequestHeaders.Add("Referer", "https://www.hbogo.cz/");
             _httpClient.DefaultRequestHeaders.Add("Origin", "https://www.hbogo.cz");
@@ -28,7 +28,7 @@ namespace GO.UWP.Player.Services
             _httpClient.DefaultRequestHeaders.Add("GO-swVersion", "4.8.0");
             _httpClient.DefaultRequestHeaders.Add("GO-CustomerId", "");
             _httpClient.DefaultRequestHeaders.Add("Connection", "keep-alive");
-            _httpClient.DefaultRequestHeaders.Add("Accept-Encoding", "");
+            _httpClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
         }
 
         public async Task<Registration> SilentRegister(Uri registrationUri)
@@ -44,8 +44,8 @@ namespace GO.UWP.Player.Services
         {
             try
             {
-                _httpClient.DefaultRequestHeaders["Referer"] = "https://gateway.hbogo.eu";
                 _httpClient.DefaultRequestHeaders["Origin"] = "https://gateway.hbogo.eu";
+                _httpClient.DefaultRequestHeaders["Referer"] = "https://gateway.hbogo.eu/signin/form";
 
                 Login lg = new Login();
 
@@ -53,6 +53,16 @@ namespace GO.UWP.Player.Services
                 lg.Language = "CES";
 
                 lg.CurrentDevice = device;
+
+                //TEST
+                lg.BirthYear = 1;
+                lg.CurrentDevice.Brand = "Chrome";
+                lg.CurrentDevice.Modell = "71";
+                lg.CurrentDevice.OsName = "Linux";
+                lg.CurrentDevice.OsVersion = "undefined";
+                lg.CurrentDevice.Platform = "COMP";
+                lg.CurrentDevice.SwVersion = "3.3.9.6418.2100";
+                //
 
                 lg.EmailAddress = username;
                 lg.Password = password;

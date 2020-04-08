@@ -7,7 +7,7 @@ namespace GO.UWP.Player.Contracts
         /// <summary>
         /// Uri where device can obtain registration.
         /// </summary>
-        Uri DeviceRegistrationUri { get; }
+        //Uri DeviceRegistrationUri { get; }
 
         /// <summary>
         /// Uri for logging direct hbo account.
@@ -17,7 +17,7 @@ namespace GO.UWP.Player.Contracts
         /// <summary>
         /// Uri for logging operators account.
         /// </summary>
-        Uri OtherAccountLoginUri { get; }
+        Uri OperatorAccountLoginUri { get; }
 
         /// <summary>
         /// Uri for searching.
@@ -25,9 +25,9 @@ namespace GO.UWP.Player.Contracts
         Uri SearchUri { get; }
 
         /// <summary>
-        /// Uri for searching.
+        /// Uri for loading favorites and other preferences.
         /// </summary>
-        Uri FavoritesUri { get; }
+        Uri SettingsUri { get; }
 
         /// <summary>
         /// Uri for searching.
@@ -38,6 +38,11 @@ namespace GO.UWP.Player.Contracts
         /// Uri for searching.
         /// </summary>
         Uri CategoriesUri { get; }
+
+        /// <summary>
+        /// Uri for searching.
+        /// </summary>
+        Uri NewCategoriesUri { get; }
 
         /// <summary>
         /// Uri for searching.

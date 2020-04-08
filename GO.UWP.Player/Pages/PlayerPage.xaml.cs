@@ -29,8 +29,12 @@ namespace GO.UWP.Player.Pages
 
             //plbk = new Playback(Element);
 
-            Element2.SetMediaPlayer(new MediaPlayer());
+            var player = new MediaPlayer();
+
+            Element2.SetMediaPlayer(player);
             SetupProtectionManager(Element2.MediaPlayer);
+
+            
         }
 
         public void SetupRequestConfigData(Guid customerId, Purchase purchase)

@@ -112,10 +112,8 @@ namespace GO.UWP.Player.ViewModel
         {
             if (string.IsNullOrEmpty(settings.CurrentDeviceId))
             {
-                CurrentDevice = (await communication.SilentRegister(config.DeviceRegistrationUri)).Data.Customer.CurrentDevice;
-
-                settings.CurrentDeviceId = CurrentDevice.Id.ToString();
-                settings.Individualization = CurrentDevice.Individualization;
+                settings.CurrentDeviceId = Guid.NewGuid().ToString();
+                settings.Individualization = Guid.NewGuid().ToString();
             }
             else
             {
