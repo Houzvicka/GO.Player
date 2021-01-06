@@ -4,11 +4,24 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:playerFramework="using:Microsoft.PlayerFramework"
     mc:Ignorable="d" NavigationCacheMode="Required"
     DataContext="{Binding Main, Source={StaticResource Locator}}"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <MediaPlayerElement x:Name="Element2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AreTransportControlsEnabled="True" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <playerFramework:MediaPlayer x:Name="Player" 
+                                     IsFullScreenEnabled="True" 
+                                     IsFullScreenVisible="True" 
+                                     AutoHideInterval="60" 
+                                     IsAudioSelectionEnabled="True" 
+                                     IsAudioSelectionVisible="True" 
+                                     IsCaptionSelectionEnabled="True" 
+                                     IsCaptionSelectionVisible="True"
+                                     IsCaptionsActive="True" />
     </Grid>
 </Page>

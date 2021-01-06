@@ -7,8 +7,8 @@
     mc:Ignorable="d" DataContext="{Binding Main, Source={StaticResource Locator}}"
     KeyDown="HomePage_OnKeyDown">
 
-    <NavigationView x:Name="mainNavigationView" MenuItemsSource="{Binding CurrentCategories.Items}" IsPaneOpen="{Binding IsMainMenuPaneOpen}" SelectedItem="{Binding CurrentlySelectedMainPageCategory, Mode=TwoWay}"
-                    PaneDisplayMode="Top" CompactPaneLength="0" Header="{Binding CurrentlySelectedMainPageCategory.Name, Mode=OneWay}" IsSettingsVisible="False" IsBackButtonVisible="Collapsed" >
+    <NavigationView x:Name="mainNavigationView" MenuItemsSource="{Binding CurrentCategoriesItems}" IsPaneOpen="{Binding IsMainMenuPaneOpen}"
+                    PaneDisplayMode="Top" CompactPaneLength="0"  IsSettingsVisible="False" IsBackButtonVisible="Collapsed" SelectedItem="{Binding CurrentlySelectedMainPageCategory, Mode=TwoWay}" >
         <NavigationView.MenuItemTemplate>
             <DataTemplate>
                 <NavigationViewItem Content="{Binding Name}" />
@@ -23,98 +23,39 @@
                             QuerySubmitted="AutoSuggestBox_QuerySubmitted" ItemsSource="{Binding CurrentSearchSugestions}"
                             SuggestionChosen="AutoSuggestBox_SuggestionChosen"/>
         </NavigationView.AutoSuggestBox>
-        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="20, 0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="0" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="50" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+        <Grid Margin="0, 0">
 
-            <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" Padding="0" BorderThickness="0"
-                    Command="{Binding OpenDetailCommand}" CommandParameter="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[0]}">
-                <Button.Content>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="2*" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        <Image Grid.Row="0" Grid.RowSpan="2" Source="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[0].BackgroundUrl, Mode=OneWay}" Stretch="UniformToFill" />
-                        <Grid Grid.Row="1" Background="#33000000">
-                            <TextBlock Text="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[0].Name, Mode=OneWay}" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
-                        </Grid>
-                    </Grid>
-                </Button.Content>
-            </Button>
-            <Button Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" Padding="0" BorderThickness="0"
-                    Command="{Binding OpenDetailCommand}" CommandParameter="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[1]}">
-                <Button.Content>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="2*" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        <Image Grid.Row="0" Grid.RowSpan="2" Source="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[1].BackgroundUrl, Mode=OneWay}" Stretch="UniformToFill" />
-                        <Grid Grid.Row="1" Background="#33000000">
-                            <TextBlock Text="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[1].Name, Mode=OneWay}" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
-                        </Grid>
-                    </Grid>
-                </Button.Content>
-            </Button>
-            <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" Padding="0" BorderThickness="0"
-                    Command="{Binding OpenDetailCommand}" CommandParameter="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[2]}">
-                <Button.Content>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="2*" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        <Image Grid.Row="0" Grid.RowSpan="2" Source="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[2].BackgroundUrl, Mode=OneWay}" Stretch="UniformToFill" />
-                        <Grid Grid.Row="1" Background="#33000000">
-                            <TextBlock Text="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[2].Name, Mode=OneWay}" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
-                        </Grid>
-                    </Grid>
-                </Button.Content>
-            </Button>
-            <Button Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" Padding="0" BorderThickness="0"
-                    Command="{Binding OpenDetailCommand}" CommandParameter="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[3]}">
-                <Button.Content>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="2*" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        <Image Grid.Row="0" Grid.RowSpan="2" Source="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[3].BackgroundUrl, Mode=OneWay}" Stretch="UniformToFill" />
-                        <Grid Grid.Row="1" Background="#33000000">
-                            <TextBlock Text="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[3].Name, Mode=OneWay}" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
-                        </Grid>
-                    </Grid>
-                </Button.Content>
-            </Button>
-            <Button Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" Padding="0" BorderThickness="0"
-                    Command="{Binding OpenDetailCommand}" CommandParameter="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[4]}">
-                <Button.Content>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="2*" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        <Image Grid.Row="0" Grid.RowSpan="2" Source="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[4].BackgroundUrl, Mode=OneWay}" Stretch="UniformToFill" />
-                        <Grid Grid.Row="1" Background="#33000000">
-                            <TextBlock Text="{Binding CurrentlySelectedMainPageCategory.Container[0].Contents.Items[4].Name, Mode=OneWay}" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
-                        </Grid>
-                    </Grid>
-                </Button.Content>
-            </Button>
-            <Button Content="..." Grid.Row="3" Grid.Column="5" HorizontalAlignment="Right" Command="{Binding OpenDetailCommand}" CommandParameter="{Binding CurrentlySelectedMainPageCategory}" />
+            <ListView ItemsSource="{Binding CurrentlySelectedMainPageCategory.Container}" IsTabStop="False">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:Name="DoubleLineDataTemplate">
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="12,12,0,0">
+                            <TextBlock Text="{Binding Name}" Style="{ThemeResource HeaderTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" Margin="5,5,5,10" />
+                            <ListView ItemsSource="{Binding Contents.Items}" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.VerticalScrollMode="Disabled">
+                                <ListView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <ItemsWrapGrid MaximumRowsOrColumns="1" Orientation="Vertical"/>
+                                    </ItemsPanelTemplate>
+                                </ListView.ItemsPanel>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:Name="ImageTextDataTemplate">
+                                        <Button Command="{Binding ElementName=mainNavigationView, Path=DataContext.OpenDetailCommand }" CommandParameter="{Binding}">
+                                            <StackPanel Height="280" Width="180" Margin="12">
+                                                <Grid HorizontalAlignment="Left" Width="180" Height="230">
+                                                    <Image Source="{Binding BackgroundUrl}" Height="230" Stretch="UniformToFill" Margin="0" HorizontalAlignment="Center"/>
+                                                </Grid>
+                                                <StackPanel Margin="0,12">
+                                                    <TextBlock Text="{Binding Name}"/>
+                                                    <TextBlock Text="{Binding ProductionYear}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Button>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </Grid>
     </NavigationView>
 </Page>

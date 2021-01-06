@@ -17,7 +17,7 @@ namespace Microsoft.Media.AdaptiveStreaming.Helper
         internal AdaptiveAudioStream(IManifestStream manifestStream)
         {
             ManifestStream = manifestStream;
-            Name = manifestStream.Name;
+            Name = manifestStream.Language;
             Language = manifestStream.Language;
 
             if (string.IsNullOrEmpty(manifestStream.Name))

@@ -12,51 +12,56 @@ namespace GO.UWP.Player.Contracts
         /// <summary>
         /// Uri for logging direct hbo account.
         /// </summary>
-        Uri HboAccountLoginUri { get; }
+        Uri HboAccountLoginUri(string countryCode, string languageCode, string apiPlatform);
 
         /// <summary>
         /// Uri for logging operators account.
         /// </summary>
-        Uri OperatorAccountLoginUri { get; }
+        Uri OperatorAccountLoginUri(string countryCodeShort, string languageCode, string apiPlatform);
 
         /// <summary>
         /// Uri for searching.
         /// </summary>
-        Uri SearchUri { get; }
+        Uri SearchUri(string countryCodeShort, string languageCode, string apiPlatform);
+
+        /// <summary>
+        /// Uri for getting default operator value.
+        /// </summary>
+        Uri DefaultOperatorUri(string countryCode, string languageCode, string apiPlatform);
+
+        /// <summary>
+        /// Uri for getting other operator value.
+        /// </summary>
+        Uri ListOperatorsUri(string countryCodeShort, string languageCode, string apiPlatform);
 
         /// <summary>
         /// Uri for loading favorites and other preferences.
         /// </summary>
-        Uri SettingsUri { get; }
+        Uri SettingsUri(string countryCodeShort, string languageCode, string apiPlatform);
 
         /// <summary>
         /// Uri for searching.
         /// </summary>
-        Uri MyCategoryUri { get; }
+        Uri MyCategoryUri(string countryCodeShort, string languageCode, string apiPlatform);
 
         /// <summary>
         /// Uri for searching.
         /// </summary>
-        Uri CategoriesUri { get; }
+        Uri CategoriesUri(string countryCodeShort, string languageCode);
 
         /// <summary>
         /// Uri for searching.
         /// </summary>
-        Uri NewCategoriesUri { get; }
+        Uri PlayUri(string countryCodeShort, string languageCode, string apiPlatform);
 
         /// <summary>
         /// Uri for searching.
         /// </summary>
-        Uri PlayUri { get; }
+        //Uri LicenceServerUri { get; }
 
         /// <summary>
         /// Uri for searching.
         /// </summary>
-        Uri LicenceServerUri { get; }
-
-        /// <summary>
-        /// Uri for searching.
-        /// </summary>
-        Uri PurchaseUri { get; }
+        Uri PurchaseUri(string countryCodeShort, string languageCode, string apiPlatform);
     }
 }

@@ -27,6 +27,13 @@ namespace GO.UWP.Player.Pages
             base.OnNavigatedFrom(e);
         }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            if(main.CurrentCategoriesItems == null || main.CurrentCategoriesItems.Count == 0) main.LoadCategories();
+        }
+
         private void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             // Only get results when it was a user typing, 

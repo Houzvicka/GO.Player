@@ -1261,7 +1261,7 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid x:Name="MediaContainer">
-                            <MediaElement x:Name="Media"/>
+                            <MediaElement x:Name="Media" />
                             <Grid x:Name="CaptionsContainer" Visibility="Collapsed" IsHitTestVisible="False"/>
                             <Border x:Name="PlayToShield" Background="#485d7a" Visibility="Collapsed"/>
                         </Grid>

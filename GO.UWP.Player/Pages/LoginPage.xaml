@@ -9,16 +9,25 @@
 
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="400">
-            <Image Source="../Assets/logoLight.svg" Margin="100,40" />
+            <Image Source="../Assets/logoLight.svg" Margin="100,40" Width="100" />
+
+            <TextBlock Text="Country: " Margin="20, 0" />
+            <ComboBox x:Name="countryBox" Margin="20,0,20,20" HorizontalAlignment="Stretch" >
+                <!--<ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={StaticResource CountryItemToFlagString}}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate> -->
+            </ComboBox>
+
+            <TextBlock Text="Operator: " Margin="20, 0" />
+            <ComboBox x:Name="operatorBox" Margin="20,0,20,20" HorizontalAlignment="Stretch" />
 
             <TextBlock Text="Username: " Margin="20, 0" />
             <TextBox x:Name="usernameTextBox" Margin="20,0,20,20" KeyDown="LoginPage_OnKeyDown" InputScope="EmailNameOrAddress" />
 
             <TextBlock Text="Password: " Margin="20, 0" />
             <PasswordBox x:Name="passBox" Margin="20,0,20,20" KeyDown="LoginPage_OnKeyDown" />
-
-            <TextBlock Text="Operator: " Margin="20, 0" />
-            <ComboBox x:Name="operatorBox" Margin="20,0,20,20" HorizontalAlignment="Stretch" />
 
             <Button Content="Login" Click="LoginButton_OnClick" HorizontalAlignment="Center" />
             <TextBlock x:Name="ErrorTextBlock" Foreground="Red" Margin="20" TextWrapping="WrapWholeWords" />

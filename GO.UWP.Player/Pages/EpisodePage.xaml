@@ -9,9 +9,10 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="2*" />
+            <RowDefinition Height="1.5*" />
+            <RowDefinition Height="100" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="2*" />
+            <RowDefinition Height="0.5*" />
         </Grid.RowDefinitions>
         <Grid x:Name="headerGrid">
             <Grid.Background>
@@ -23,11 +24,65 @@
             <Image Source="{Binding CurrentlySelectedShow.BackgroundUrl}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Stretch="UniformToFill" />
             <TextBlock x:Name="showTitle" Text="{Binding CurrentlySelectedShow.Name}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Foreground="White" FontSize="30" Margin="20"/>
         </Grid>
-        <Grid Grid.Row="1" x:Name="infoGrid">
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="20">
+            <TextBlock Text="{Binding CurrentlySelectedShow.ProductionYear}" Margin="5,8" />
+            <TextBlock Text="|" FontSize="20" Margin="5,0" />
+            <TextBlock Text="{Binding CurrentlySelectedShow.AgeRatingName}" Margin="5,8" />
+            <TextBlock Text="|" FontSize="20" Margin="5,0" />
+            <TextBlock Text="{Binding CurrentlySelectedShow.Genre}" Margin="5,8,0,8" />
+            <TextBlock Text="," Margin="2,8" />
+            <TextBlock Text="{Binding CurrentlySelectedShow.SecondaryGenre}" Margin="0,8,5,8" />
+            <TextBlock Text="|" FontSize="20" Margin="5,0" />
+            <TextBlock Text="IMDB" Margin="5,8,0,8" />
+            <TextBlock Text="-" Margin="2,8" />
+            <TextBlock Text="{Binding CurrentlySelectedShow.ImdbRate}" Margin="0,8,5,8" />
+            <TextBlock Text="|" FontSize="20" Margin="5,0" />
+            <TextBlock Text="{Binding CurrentlySelectedShow.DurationText}" Margin="5,8" />
+        </StackPanel>
+        <Grid Grid.Row="2" x:Name="infoGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
             <TextBlock x:Name="showIngo" Text="{Binding CurrentlySelectedShow.Abstract}" HorizontalAlignment="Left" VerticalAlignment="Center" TextWrapping="WrapWholeWords" Foreground="White" FontSize="15" Margin="20"/>
+            <Grid Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBlock Text="Director" />
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding CurrentlySelectedShow.Director}" />
+
+                <TextBlock Grid.Row="1" Text="Cast" />
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentlySelectedShow.Cast}" TextWrapping="WrapWholeWords" />
+
+                <TextBlock Grid.Row="2" Text="Country of origin" />
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding CurrentlySelectedShow.OriginCountry}" />
+
+                <TextBlock Grid.Row="3" Text="Audio Language" />
+                <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
+                    <TextBlock Text="{Binding CurrentlySelectedShow.AudioTracks[0].Name}" />
+                    <TextBlock Text="{Binding CurrentlySelectedShow.AudioTracks[1].Name}" Margin="5,0" />
+                    <TextBlock Text="{Binding CurrentlySelectedShow.AudioTracks[2].Name}" />
+                </StackPanel>
+
+                <TextBlock Grid.Row="4" Text="Subtitles Language" />
+                <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal">
+                    <TextBlock Text="{Binding CurrentlySelectedShow.Subtitles[0].Name}" />
+                    <TextBlock Text="{Binding CurrentlySelectedShow.Subtitles[1].Name}" Margin="5,0" />
+                    <TextBlock Text="{Binding CurrentlySelectedShow.Subtitles[2].Name}" />
+                </StackPanel>
+            </Grid>
         </Grid>
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Visibility="{Binding CurrentlySelectedShow.ContentType, Converter={StaticResource ContentToVisibility}}">
-            <Button x:Name="playBtn" Content="Play" Command="{Binding PlayCommand}" CommandParameter="{Binding CurrentlySelectedShow}" Margin="20" IsEnabled="{Binding CurrentlySelectedShow.AllowPlay}" VerticalAlignment="Center" />
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Visibility="{Binding CurrentlySelectedShow.ContentType, Converter={StaticResource ContentToVisibility}}">
+            <Button x:Name="playBtn" Content="Play" Command="{Binding PlayCommand}" CommandParameter="{Binding CurrentlySelectedShow}" Margin="20" IsEnabled="{Binding CurrentlySelectedShow.AllowPlay}" VerticalAlignment="Center" Padding="50, 20" />
             <TextBlock Text="Dostupné od: " Margin="20" Visibility="{Binding CurrentlySelectedShow.AllowPlay, Converter={StaticResource InvertedBoolToVisibility}}" VerticalAlignment="Center" />
             <TextBlock Text="{Binding CurrentlySelectedShow.AvailabilityFrom}" Margin="20" Visibility="{Binding CurrentlySelectedShow.AllowPlay, Converter={StaticResource InvertedBoolToVisibility}}" VerticalAlignment="Center" />
         </StackPanel>

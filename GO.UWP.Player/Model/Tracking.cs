@@ -49,5 +49,18 @@ namespace GO.UWP.Player.Model
 
         [JsonProperty("StreamUrl")]
         public Uri StreamUrl { get; set; }
+
+        
+        [JsonProperty("Filter")]
+        public string Filter { get; set; }
+
+        [JsonProperty("Name")]
+        public string Name { get; set; }
+
+        [JsonProperty("SortOption")]
+        public string SortOption { get; set; }
+
+        [JsonProperty("SubFilter")]
+        public string SubFilter { get; set; }
     }
 }

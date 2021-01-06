@@ -9,6 +9,8 @@ using GO.UWP.Player.Contracts;
 using GO.UWP.Player.Messages;
 using GO.UWP.Player.Model;
 using GO.UWP.Player.Pages;
+using GO.UWP.Player.Static;
+using Microsoft.Media.TimedText;
 
 namespace GO.UWP.Player.ViewModel
 {
@@ -28,12 +30,12 @@ namespace GO.UWP.Player.ViewModel
         }
         private CurrentDevice currentDevice;
 
-        public Categories CurrentCategories
+        public List<CategoriesItem> CurrentCategoriesItems
         {
-            get { return currentCategories; }
-            set { Set(ref currentCategories, value); }
+            get { return currentCategoriesItems; }
+            set { Set(ref currentCategoriesItems, value); }
         }
-        private Categories currentCategories;
+        private List<CategoriesItem> currentCategoriesItems;
 
         public CategoriesItem CurrentlySelectedCategory
         {
@@ -91,6 +93,13 @@ namespace GO.UWP.Player.ViewModel
         }
         private List<ContentsItem> currentSearchSugestions;
 
+        public CountryItem CurrentlySelectedCountry
+        {
+            get { return currentlySelectedCountry; }
+            set { Set(ref currentlySelectedCountry, value); }
+        }
+        private CountryItem currentlySelectedCountry;
+
         private IConfigService config;
         private ISettingsService settings;
         private ICommunicationService communication;
@@ -104,11 +113,12 @@ namespace GO.UWP.Player.ViewModel
             this.settings = settings;
             this.communication = communication;
 
+            if (!settings.NationalDomain.IsNullOrWhiteSpace()) CurrentlySelectedCountry = Static.Static.CountriesList.First(c => c.NationalDomain == settings.NationalDomain);
+
             RegisterOrLoadCurrentDevice();
-            LoadCategories();
         }
 
-        public async void RegisterOrLoadCurrentDevice()
+        public void RegisterOrLoadCurrentDevice()
         {
             if (string.IsNullOrEmpty(settings.CurrentDeviceId))
             {
@@ -125,20 +135,36 @@ namespace GO.UWP.Player.ViewModel
             }
         }
 
-        public async Task<LoginResponse> TryLogin(string login, string password, int operatorId)
+        public async Task<List<OperatorItem>> LoadOperators(CountryItem selected)
         {
-            return await communication.Login(config.HboAccountLoginUri, login, password, operatorId, CurrentDevice);
+            Operators operD = await communication.GetOperators(config.DefaultOperatorUri(selected.CountryCodeLong, selected.LanguageCode, "XONE"));
+            Operators operO = await communication.GetOperators(config.ListOperatorsUri(selected.CountryCodeShort, selected.LanguageCode, "XONE"));
+
+            List<OperatorItem> result = operD.Items;
+            result.AddRange(operO.Items);
+            return result;
         }
 
-        public async void Login(string login, string password, int operatorId, CurrentDevice device)
+        public async Task<LoginResponse> TryLogin(string login, string password, Guid operatorId, CountryItem selected)
         {
-            CurrentUser = await communication.Login(config.HboAccountLoginUri, login, password, operatorId, device);
+            return await communication.Login(config.HboAccountLoginUri(selected.CountryCodeLong, selected.LanguageCode, "XONE"), login, password, operatorId, CurrentDevice);
+        }
+
+        public async void Login(string login, string password, Guid operatorId, CurrentDevice device)
+        {
+            CurrentUser = await communication.Login(config.HboAccountLoginUri(CurrentlySelectedCountry.CountryCodeLong, CurrentlySelectedCountry.LanguageCode, "XONE"), login, password, operatorId, device);
         }
 
         public async void LoadCategories()
         {
-            CurrentCategories = await communication.GetCategories(config.CategoriesUri);
-            CurrentlySelectedMainPageCategory = CurrentCategories.Items.FirstOrDefault();
+            CurrentCategoriesItems = (await communication.GetCategories(config.CategoriesUri(CurrentlySelectedCountry.CountryCodeShort, CurrentlySelectedCountry.LanguageCode))).Items.GetRange(0, 3);
+
+            foreach (CategoriesItem item in CurrentCategoriesItems)
+            {
+                item.Container = (await communication.GetCategory(new Uri(item.ObjectUrl))).Container;
+            }
+
+            CurrentlySelectedMainPageCategory = CurrentCategoriesItems.FirstOrDefault();
         }
 
         public async void LoadCurrentContent(object currentType)
@@ -165,7 +191,7 @@ namespace GO.UWP.Player.ViewModel
                     switch (content.ContentType)
                     {
                         case 1L: //Movie
-                            CurrentlySelectedShow = content;
+                            CurrentlySelectedShow = await communication.GetShowDetail(content.ObjectUrl);
 
                             Messenger.Default.Send(new NavigateMainFrameMessage(typeof(EpisodePage)));
                             break;
@@ -177,7 +203,7 @@ namespace GO.UWP.Player.ViewModel
                             Messenger.Default.Send(new NavigateMainFrameMessage(typeof(DetailPage)));
                             break;
                         case 3L: //Episode
-                            CurrentlySelectedShow = content;
+                            CurrentlySelectedShow = await communication.GetShowDetail(content.ObjectUrl);
 
                             Messenger.Default.Send(new NavigateMainFrameMessage(typeof(EpisodePage)));
                             break;
@@ -193,7 +219,7 @@ namespace GO.UWP.Player.ViewModel
 
         public async void Search(string searchQuery)
         {
-            var response = await  communication.GetSearchResults(config.SearchUri, searchQuery);
+            var response = await  communication.GetSearchResults(config.SearchUri(CurrentlySelectedCountry.CountryCodeShort, CurrentlySelectedCountry.LanguageCode, "XONE"), searchQuery);
             if (response != null && response.Container[0].Success)
                 CurrentSearchSugestions = response.Container[0].Contents.Items;
         }
@@ -202,13 +228,8 @@ namespace GO.UWP.Player.ViewModel
         {
             if (show is ContentsItem ci && ci.AllowPlay)
             {
-                CurrentlySelectedVideo = await communication.GetPlayableLink(config.PurchaseUri, ci.Id, CurrentDevice.Individualization, settings.OperatorId);
-
-#if DEBUG
-                Messenger.Default.Send(new NavigateMainFrameMessage(typeof(DebugPlayerPage)));
-#else
+                CurrentlySelectedVideo = await communication.GetPlayableLink(config.PurchaseUri(CurrentlySelectedCountry.CountryCodeShort, CurrentlySelectedCountry.LanguageCode, "XONE"), ci.Id, CurrentDevice.Individualization, settings.OperatorId, "CES", "XONE");
                 Messenger.Default.Send(new NavigateMainFrameMessage(typeof(PlayerPage)));
-#endif
             }
         }
     }

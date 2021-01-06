@@ -1,10 +1,18 @@
 ﻿using System;
+using System.Diagnostics;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Email;
 using Windows.System.Profile;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Controls;
+using GO.UWP.Player.Extensions;
+using GO.UWP.Player.Helpers;
 using GO.UWP.Player.Pages;
+
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace GO.UWP.Player
 {
@@ -21,11 +29,14 @@ namespace GO.UWP.Player
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+            UnhandledException += OnUnhandledException;
 
             if (AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Xbox")
             {
                 this.RequiresPointerMode = Windows.UI.Xaml.ApplicationRequiresPointerMode.WhenRequested;
             }
+
+            AppCenter.Start("ebe8eb3b-643e-4dc1-b1be-c209fbdfb57d", typeof(Analytics), typeof(Crashes));
         }
 
         /// <summary>
@@ -57,6 +68,13 @@ namespace GO.UWP.Player
             }
         }
 
+        private void OnUnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs args)
+        {
+            Debug.WriteLine($"EXCEPTION: {args.Message}");
+            ShowError(args);
+            if (Debugger.IsAttached) Debugger.Break();
+        }
+
         /// <summary>
         /// Invoked when application execution is being suspended.  Application state is saved
         /// without knowing whether the application will be terminated or resumed with the contents
@@ -69,6 +87,36 @@ namespace GO.UWP.Player
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
+        }
+        
+        private async void ShowError(Windows.UI.Xaml.UnhandledExceptionEventArgs e)
+        {
+            // warning Do not include this test Error dialog in the Release build!
+            e.Handled = true;
+            try
+            {
+                var msgbox = new ContentDialog
+                {
+                    Title = "Nastala výjimka v aplikaci!",
+                    Content = "V aplikaci nastala chyba, odeslat hlášení o chybě mailem?",
+                    PrimaryButtonText = "Odeslat",
+                    CloseButtonText = "Zrušit"
+                };
+                var res = await msgbox.ShowAsync();
+                if (res != ContentDialogResult.Secondary) return;
+
+                EmailMessage mail = new EmailMessage();
+                mail.To.Add(new EmailRecipient("app@jiri.it"));
+                mail.Subject = "[Exception] GO Player";
+                mail.Body = $"Seznam.cz {StatsInfo.AppVersion}, {StatsInfo.OsVersion}, {StatsInfo.DeviceModel}" +
+                            $"\n\n{e.Message}\n\n{e.Exception.ToNiceString(6)}";
+                await EmailManager.ShowComposeNewEmailAsync(mail);
+            }
+            catch (Exception ex2)
+            {
+                Debug.WriteLine($"Error sending error report: {ex2}");
+            }
+            Current.Exit();
         }
     }
 }

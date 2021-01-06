@@ -266,7 +266,7 @@ namespace Microsoft.PlayerFramework
     /// <summary>
     /// A base class that can help keep a ViewModelCommand object associated with the current IInteractiveViewModel.
     /// </summary>
-    public abstract class MediaControlBehaviorBase : DependencyObject
+    public abstract class MediaControlBehaviorBase : Button
     {
         ICommand command;
 

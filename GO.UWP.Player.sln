@@ -1,15 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.136
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29609.76
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GO.UWP.Player", "GO.UWP.Player\GO.UWP.Player.csproj", "{7730EDF6-34C3-418E-AF64-DD4A1CBDD6D6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{864210C0-E36E-4F41-8C3C-E38AED4E7A45} = {864210C0-E36E-4F41-8C3C-E38AED4E7A45}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Media.AdaptiveStreaming.Helper", "UWP.WinRT.AdaptiveStreaming.Helper\Microsoft.Media.AdaptiveStreaming.Helper.csproj", "{864210C0-E36E-4F41-8C3C-E38AED4E7A45}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.PlayerFramework.Adaptive", "UWP.Xaml.Adaptive\Microsoft.PlayerFramework.Adaptive.csproj", "{953BF361-F4E0-4A3D-A465-FB9CF72AF33C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.PlayerFramework.Core", "UWP.Xaml.Core\Microsoft.PlayerFramework.Core.csproj", "{84A3F824-24BE-4E88-ABAE-F228E8A40F37}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.PlayerFramework.TimedText", "UWP.Xaml.TimedText\Microsoft.PlayerFramework.TimedText.csproj", "{1D33874F-BF6D-4A99-89A9-2833E475E16E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -159,6 +164,36 @@ Global
 		{84A3F824-24BE-4E88-ABAE-F228E8A40F37}.Release|x64.Build.0 = Release|x64
 		{84A3F824-24BE-4E88-ABAE-F228E8A40F37}.Release|x86.ActiveCfg = Release|x86
 		{84A3F824-24BE-4E88-ABAE-F228E8A40F37}.Release|x86.Build.0 = Release|x86
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Debug_Xbox|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Debug_Xbox|Any CPU.Build.0 = Debug|Any CPU
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Debug_Xbox|ARM.ActiveCfg = Debug|ARM
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Debug_Xbox|ARM.Build.0 = Debug|ARM
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Debug_Xbox|ARM64.ActiveCfg = Debug|Any CPU
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Debug_Xbox|ARM64.Build.0 = Debug|Any CPU
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Debug_Xbox|x64.ActiveCfg = Debug|x64
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Debug_Xbox|x64.Build.0 = Debug|x64
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Debug_Xbox|x86.ActiveCfg = Debug|x86
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Debug_Xbox|x86.Build.0 = Debug|x86
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Debug|ARM.ActiveCfg = Debug|ARM
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Debug|ARM.Build.0 = Debug|ARM
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Debug|x64.ActiveCfg = Debug|x64
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Debug|x64.Build.0 = Debug|x64
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Debug|x86.ActiveCfg = Debug|x86
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Debug|x86.Build.0 = Debug|x86
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Release|ARM.ActiveCfg = Release|ARM
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Release|ARM.Build.0 = Release|ARM
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Release|ARM64.Build.0 = Release|Any CPU
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Release|x64.ActiveCfg = Release|x64
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Release|x64.Build.0 = Release|x64
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Release|x86.ActiveCfg = Release|x86
+		{1D33874F-BF6D-4A99-89A9-2833E475E16E}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

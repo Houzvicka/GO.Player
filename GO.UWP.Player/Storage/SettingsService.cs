@@ -1,4 +1,5 @@
-﻿using GO.UWP.Player.Contracts;
+﻿using System;
+using GO.UWP.Player.Contracts;
 using GO.UWP.Player.Helpers;
 
 namespace GO.UWP.Player.Services
@@ -33,11 +34,18 @@ namespace GO.UWP.Player.Services
         }
         private readonly LocalSetting<string> password = new LocalSetting<string>(nameof(Password));
 
-        public int OperatorId
+        public string NationalDomain
+        {
+            get { return nationalDomain.Value; }
+            set { nationalDomain.Value = value; }
+        }
+        private readonly LocalSetting<string> nationalDomain = new LocalSetting<string>(nameof(NationalDomain));
+
+        public Guid OperatorId
         {
             get { return operatorId.Value; }
             set { operatorId.Value = value; }
         }
-        private readonly LocalSetting<int> operatorId = new LocalSetting<int>(nameof(OperatorId));
+        private readonly LocalSetting<Guid> operatorId = new LocalSetting<Guid>(nameof(OperatorId));
     }
 }

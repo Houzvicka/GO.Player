@@ -39,7 +39,16 @@ namespace GO.UWP.Player.Services
                 : JsonConvert.DeserializeObject<Registration>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<LoginResponse> Login(Uri loginUri, string username, string password, int operatorId,
+        public async Task<Operators> GetOperators(Uri defaultOperatorUri)
+        {
+            var response = await _httpClient.GetAsync(defaultOperatorUri);
+            string stringResponse = await response.Content.ReadAsStringAsync();
+            return !response.IsSuccessStatusCode
+                ? null
+                : JsonConvert.DeserializeObject<Operators>(stringResponse);
+        }
+
+        public async Task<LoginResponse> Login(Uri loginUri, string username, string password, Guid operatorId,
             CurrentDevice device)
         {
             try
@@ -56,6 +65,7 @@ namespace GO.UWP.Player.Services
 
                 //TEST
                 lg.BirthYear = 1;
+                if(lg.CurrentDevice == null) lg.CurrentDevice = new CurrentDevice();
                 lg.CurrentDevice.Brand = "Chrome";
                 lg.CurrentDevice.Modell = "71";
                 lg.CurrentDevice.OsName = "Linux";
@@ -66,7 +76,7 @@ namespace GO.UWP.Player.Services
 
                 lg.EmailAddress = username;
                 lg.Password = password;
-                lg.OperatorId = Operators.OperatorsList[operatorId].Item2;
+                lg.OperatorId = operatorId;
 
                 var jsonRequest = JsonConvert.SerializeObject(lg);
                 var requestContent = new HttpStringContent(jsonRequest, UnicodeEncoding.Utf8, "application/json");
@@ -110,9 +120,11 @@ namespace GO.UWP.Player.Services
 
             if (!response.IsSuccessStatusCode) response = await _httpClient.GetAsync(new Uri(response.Headers["location"])); //catch redirect
 
+            var stringResponse = await response.Content.ReadAsStringAsync();
+
             return !response.IsSuccessStatusCode
                 ? null
-                : JsonConvert.DeserializeObject<Categories>(await response.Content.ReadAsStringAsync());
+                : JsonConvert.DeserializeObject<Categories>(stringResponse);
         }
 
         public async Task<ContentsItem> GetShowDetail(Uri showUri)
@@ -128,17 +140,18 @@ namespace GO.UWP.Player.Services
                 : JsonConvert.DeserializeObject<ContentsItem>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<Video> GetPlayableLink(Uri playUri, Guid showGuid, string individualization, int operatorGuidId)
+        public async Task<Video> GetPlayableLink(Uri playUri, Guid showGuid, string individualization, Guid operatorGuid, string languageCode, string apiPlatform)
         {
             var context = new HttpStringContent(
-                $"<Purchase xmlns=\"go:v5:interop\"><AllowHighResolution>true</AllowHighResolution><ContentId>{showGuid.ToString()}</ContentId><CustomerId>{_httpClient.DefaultRequestHeaders["GO-CustomerId"]}</CustomerId><Individualization>{individualization}</Individualization><OperatorId>{Operators.OperatorsList[operatorGuidId].Item2}</OperatorId><ClientInfo></ClientInfo><IsFree>false</IsFree><UseInteractivity>false</UseInteractivity></Purchase>");
+                $"<Purchase xmlns=\"go:v8:interop\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"><AirPlayAllowed>false</AirPlayAllowed><AllowHighResolution>true </AllowHighResolution><ContentId>{showGuid.ToString()}</ContentId><CustomerId>{_httpClient.DefaultRequestHeaders["GO-CustomerId"]}</CustomerId><Individualization>{individualization}</Individualization><OperatorId>{operatorGuid}</OperatorId><ApplicationLanguage>{languageCode}' + self.LANGUAGE_CODE + '</ApplicationLanguage><IsFree>false</IsFree><PreferedAudio>{languageCode}' + self.LANGUAGE_CODE + '</PreferedAudio><PreferedSubtitle>{languageCode}</PreferedSubtitle><PreferredAudioType>Stereo</PreferredAudioType><RequiredPlatform>{apiPlatform}</RequiredPlatform><UseInteractivity>false</UseInteractivity></Purchase>");
             var response = await _httpClient.PostAsync(playUri, context);
+            var stringResponse = await response.Content.ReadAsStringAsync();
             return !response.IsSuccessStatusCode
                 ? null
-                : JsonConvert.DeserializeObject<Video>(await response.Content.ReadAsStringAsync());
+                : JsonConvert.DeserializeObject<Video>(stringResponse);
         }
 
-        public async Task<SearchResult> GetSearchResults(Uri searchUri, string searchQuery)
+        public async Task<Item> GetSearchResults(Uri searchUri, string searchQuery)
         {
             var response = await _httpClient.GetAsync(new Uri(searchUri + searchQuery + "/0"));
 
@@ -148,7 +161,7 @@ namespace GO.UWP.Player.Services
 
             return !response.IsSuccessStatusCode
                 ? null
-                : JsonConvert.DeserializeObject<SearchResult>(await response.Content.ReadAsStringAsync());
+                : JsonConvert.DeserializeObject<Item>(await response.Content.ReadAsStringAsync());
         }
     }
 }

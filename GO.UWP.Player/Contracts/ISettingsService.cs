@@ -1,4 +1,6 @@
-﻿namespace GO.UWP.Player.Contracts
+﻿using System;
+
+namespace GO.UWP.Player.Contracts
 {
     public interface ISettingsService
     {
@@ -7,6 +9,7 @@
         
         string Username { get; set; }
         string Password { get; set; }
-        int OperatorId { get; set; }
+        string NationalDomain { get; set; }
+        Guid OperatorId { get; set; }
     }
 }

@@ -2,39 +2,33 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Windows.Media.Core;
-using Windows.Media.Playback;
+using Windows.Foundation.Collections;
+using Windows.Media;
 using Windows.Media.Protection;
 using Windows.Media.Protection.PlayReady;
-using Windows.Storage;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using GO.UWP.Player.Helpers;
 using GO.UWP.Player.Helpers.Playback;
 using GO.UWP.Player.Model;
 using GO.UWP.Player.ViewModel;
-using AudioTrack = GO.UWP.Player.Model.AudioTrack;
+using Microsoft.PlayerFramework.Adaptive;
+using Microsoft.PlayerFramework.TimedText;
+using Microsoft.PlayerFramework;
 
 namespace GO.UWP.Player.Pages
 {
     public sealed partial class PlayerPage : Page
     {
         private MainViewModel mvm => (MainViewModel)DataContext;
-
-        //private Playback plbk;
         
+        MediaProtectionManager mediaProtectionManager = new MediaProtectionManager();
+
         public PlayerPage()
         {
             this.InitializeComponent();
-
-            //plbk = new Playback(Element);
-
-            var player = new MediaPlayer();
-
-            Element2.SetMediaPlayer(player);
-            SetupProtectionManager(Element2.MediaPlayer);
-
-            
         }
 
         public void SetupRequestConfigData(Guid customerId, Purchase purchase)
@@ -54,154 +48,141 @@ namespace GO.UWP.Player.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
+
+            SetupRequestConfigData(mvm.CurrentUser.Customer.Id, mvm.CurrentlySelectedVideo.Purchase);
+            var playUri = new Uri(mvm.CurrentlySelectedVideo.Purchase.MediaUrl.AbsoluteUri + "/manifest");
+
+            InitializePlugins();
+            InitializeMediaExtensionManager();
+            InitializeMediaProtectionManager();
+
+            HookEventHandlers();
+
+            Player.Source = new Uri(playUri.ToString());
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+
+            Dispose();
+        }
+
+        private void HookEventHandlers()
+        {
+            Player.CurrentStateChanged += new RoutedEventHandler(CurrentStateChanged);
+            Player.MediaEnded += MediaEnded;
+            Player.MediaFailed += new ExceptionRoutedEventHandler(MediaFailed);
+            Player.MediaOpened += new RoutedEventHandler(MediaOpened);
+        }
+
+        private void UnhookEventHandlers()
+        {
+            Player.CurrentStateChanged -= new RoutedEventHandler(CurrentStateChanged);
+            Player.MediaEnded -= MediaEnded;
+            Player.MediaFailed -= new ExceptionRoutedEventHandler(MediaFailed);
+            Player.MediaOpened -= new RoutedEventHandler(MediaOpened);
+        }
+
+        private void MediaOpened(object sender, RoutedEventArgs e)
+        {
+            //DebugLogger.Log("MediaOpened: " + ((MediaPlayer)sender).Source);
+            // Start playing the file when ready
+            Player.Play();
+        }
+
+        private void CurrentStateChanged(object sender, RoutedEventArgs e)
+        {
+            //DebugLogger.Log("CurrentState:" + ((MediaPlayer)sender).CurrentState);
+        }
+
+        private void MediaFailed(object sender, ExceptionRoutedEventArgs e)
+        {
+            UnhookEventHandlers();
+            //DebugLogger.Log("MediaFailed Source: " + ((MediaPlayer)sender).Source);
+            //DebugLogger.Log("Playback Failed");
+            //DebugLogger.Log("MediaFailed: " + e.ErrorMessage);
+        }
+
+        private void MediaEnded(object sender, MediaPlayerActionEventArgs e)
+        {
+            UnhookEventHandlers();
+            //DebugLogger.Log("MediaEnded: " + ((MediaPlayer)sender).Source);
+            //DebugLogger.Log("Playback succeeded");
+        }
+
+        public void Dispose()
+        {
+            UnhookEventHandlers();
+
+            mediaProtectionManager.ComponentLoadFailed -= new ComponentLoadFailedEventHandler(OnMediaProtectionManagerComponentLoadFailed);
+            mediaProtectionManager.ServiceRequested -= new ServiceRequestedEventHandler(OnMediaProtectionManagerServiceRequested);
             
-            Play(mvm.CurrentlySelectedVideo);
-        }
-
-        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
-        {
-            base.OnNavigatingFrom(e);
-
-            Pause();
-        }
-
-        public void Play(Video currVid)
-        {
-            SetupRequestConfigData(mvm.CurrentUser.Customer.Id, currVid.Purchase);
-            var playUri = new Uri(currVid.Purchase.MediaUrl.AbsoluteUri + "/manifest");
-            //plbk.LoadMediaToSource(Element, playUri, true);
-
-            var media = MediaSource.CreateFromUri(playUri);
-
-            foreach (var sub in currVid.Purchase.Subtitles)
+            if (Player != null)
             {
-                var tts = TimedTextSource.CreateFromUri(new Uri(sub.Url), sub.Name);
-                tts.Resolved += Tts_Resolved;
-
-                media.ExternalTimedTextSources.Add(tts);
-            }
-
-            var playbackItem = new MediaPlaybackItem(media);
-
-            // Present the first track
-            playbackItem.TimedMetadataTracksChanged += (sender, args) =>
-            {
-                playbackItem.TimedMetadataTracks.SetPresentationMode(0, TimedMetadataTrackPresentationMode.PlatformPresented);
-            };
-
-            Element2.MediaPlayer.Source = playbackItem;
-            Element2.MediaPlayer.Play();
-        }
-
-        private void Tts_Resolved(TimedTextSource sender, TimedTextSourceResolveResultEventArgs args)
-        {
-            // Handle errors
-            if (args.Error != null)
-            {
-                Debug.WriteLine(args.Error);
-                return;
+                Player.Close();
+                Player = null;
             }
         }
 
-        public void Pause()
+        /// <summary>Initializes the Smooth Streaming plugin.</summary>
+        private void InitializePlugins()
         {
-            Element2.MediaPlayer.Pause();
+            var adaptivePlugin = new AdaptivePlugin() { InstreamCaptionsEnabled = true };
+
+            Player.Plugins.Add(adaptivePlugin);
+
+            var captionPlugin = new CaptionsPlugin();
+            //captionPlugin.CaptionParsed += CaptionPlugin_CaptionParsed;
+            Player.Plugins.Add(captionPlugin);
         }
 
-        private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        /// <summary>Initializes the media extension manager so we can handle PlayReady protected content.</summary>
+        private void InitializeMediaExtensionManager()
         {
-            //if (sender is ListBox lb && lb.SelectedItem is AudioTrack at) SetAudioLanguage(at.Code, Element);
+            var plugins = new MediaExtensionManager();
+
+            // Add support for IIS Smooth Streaming Manifests
+            plugins.RegisterByteStreamHandler("Microsoft.Media.AdaptiveStreaming.SmoothByteStreamHandler", ".ism", "text/xml");
+            plugins.RegisterByteStreamHandler("Microsoft.Media.AdaptiveStreaming.SmoothByteStreamHandler", ".ism", "application/vnd.ms-sstr+xml");
+
+            // Add support for PlayReady video and audio files
+            plugins.RegisterByteStreamHandler("Microsoft.Media.Protection.PlayReady.PlayReadyByteStreamHandler", ".pyv", "");
+            plugins.RegisterByteStreamHandler("Microsoft.Media.Protection.PlayReady.PlayReadyByteStreamHandler", ".pya", "");
         }
 
-        private bool SetAudioLanguage(string lcid, MediaElement media)
+        /// <summary>Initializes the PlayReady protection manager.</summary>
+        private void InitializeMediaProtectionManager()
         {
-            bool wasLanguageSet = false;
+            mediaProtectionManager.Properties.Clear();
+            mediaProtectionManager.ComponentLoadFailed += OnMediaProtectionManagerComponentLoadFailed;
+            mediaProtectionManager.ServiceRequested += OnMediaProtectionManagerServiceRequested;
 
-            for (int index = 0; index < media.AudioStreamCount; index++)
+            // Set up the container GUID for the CFF format (used with DASH streams), see http://uvdemystified.com/uvfaq.html#3.2
+            // The GUID represents MPEG DASH Content Protection using Microsoft PlayReady, see http://dashif.org/identifiers/protection/
+            mediaProtectionManager.Properties["Windows.Media.Protection.MediaProtectionContainerGuid"] = "{9A04F079-9840-4286-AB92-E65BE0885F95}";
+
+            // Set up the drm layer to use. Hardware DRM is the default, but not all older hardware supports this
+            var supportsHardwareDrm = PlayReadyStatics.CheckSupportedHardware(PlayReadyHardwareDRMFeatures.HardwareDRM);
+            if (!supportsHardwareDrm)
             {
-                if (media.GetAudioStreamLanguage(index) == lcid)
-                {
-                    media.AudioStreamIndex = index;
-                    wasLanguageSet = true;
-                }
+                mediaProtectionManager.Properties["Windows.Media.Protection.UseSoftwareProtectionLayer"] = true;
             }
 
-            return wasLanguageSet;
+            // Set up the content protection manager so it uses the PlayReady Input Trust Authority (ITA) for the relevant media sources
+            // The MediaProtectionSystemId GUID is format and case sensitive, see https://msdn.microsoft.com/en-us/library/windows.media.protection.mediaprotectionmanager.properties.aspx
+            var cpsystems = new PropertySet();
+            cpsystems[PlayReadyStatics.MediaProtectionSystemId.ToString("B").ToUpper()] = "Windows.Media.Protection.PlayReady.PlayReadyWinRTTrustedInput";
+            mediaProtectionManager.Properties["Windows.Media.Protection.MediaProtectionSystemIdMapping"] = cpsystems;
+            mediaProtectionManager.Properties["Windows.Media.Protection.MediaProtectionSystemId"] = PlayReadyStatics.MediaProtectionSystemId.ToString("B").ToUpper();
+
+            Player.ProtectionManager = mediaProtectionManager;
         }
 
-        private MediaProtectionManager _protectionManager = null;
-        Windows.Media.MediaExtensionManager _extensions = null;
-
-        void SetupProtectionManager(MediaPlayer mediaElement)
+        private void OnMediaProtectionManagerComponentLoadFailed(MediaProtectionManager sender, ComponentLoadFailedEventArgs e)
         {
-            Debug.WriteLine("Enter Playback.SetupProtectionManager()");
-
-            Debug.WriteLine("Creating protection system mappings...");
-            _protectionManager = new MediaProtectionManager();
-
-            _protectionManager.ComponentLoadFailed += new ComponentLoadFailedEventHandler(ProtectionManager_ComponentLoadFailed);
-            _protectionManager.ServiceRequested += new ServiceRequestedEventHandler(ProtectionManager_ServiceRequested);
-
-            Debug.WriteLine("Creating protection system mappings...");
-            //Setup PlayReady as the ProtectionSystem to use by MF. 
-            //The code here is mandatory and should be just copied directly over to the app
-            Windows.Foundation.Collections.PropertySet cpSystems = new Windows.Foundation.Collections.PropertySet();
-
-            //Indicate to the MF pipeline to use PlayReady's TrustedInput
-            cpSystems.Add("{F4637010-03C3-42CD-B932-B48ADF3A6A54}", "Windows.Media.Protection.PlayReady.PlayReadyWinRTTrustedInput");
-            _protectionManager.Properties.Add("Windows.Media.Protection.MediaProtectionSystemIdMapping", cpSystems);
-            //Use by the media stream source about how to create ITA InitData.
-            //See here for more detai: https://msdn.microsoft.com/en-us/library/windows/desktop/aa376846%28v=vs.85%29.aspx
-            _protectionManager.Properties.Add("Windows.Media.Protection.MediaProtectionSystemId", "{F4637010-03C3-42CD-B932-B48ADF3A6A54}");
-
-            // Setup the container GUID that's in the PPSH box
-            _protectionManager.Properties.Add("Windows.Media.Protection.MediaProtectionContainerGuid", "{9A04F079-9840-4286-AB92-E65BE0885F95}");
-
-            Debug.WriteLine("Creating media extension manager...");
-            _extensions = new Windows.Media.MediaExtensionManager();
-
-            Debug.WriteLine("Registering ByteStreamHandlers for PIFF content");
-            _extensions.RegisterByteStreamHandler("Microsoft.Media.AdaptiveStreaming.SmoothByteStreamHandler", ".ism", "text/xml");
-            _extensions.RegisterByteStreamHandler("Microsoft.Media.AdaptiveStreaming.SmoothByteStreamHandler", ".ism", "application/vnd.ms-sstr+xml");
-
-            Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-
-            //Setup Software Override based on app setting
-            //By default, PlayReady uses Hardware DRM if the machine support it. However, in case the app still want
-            //software behavior, they can set localSettings.Containers["PlayReady"].Values["SoftwareOverride"]=1. 
-            //This code tells MF to use software override as well
-            if (localSettings.Containers.ContainsKey("PlayReady") &&
-                localSettings.Containers["PlayReady"].Values.ContainsKey("SoftwareOverride"))
-            {
-                int UseSoftwareProtectionLayer = (int)localSettings.Containers["PlayReady"].Values["SoftwareOverride"];
-
-                if (UseSoftwareProtectionLayer == 1)
-                {
-                    Debug.WriteLine(" ");
-                    Debug.WriteLine("***** Use Software Protection Layer ******");
-                    _protectionManager.Properties.Add("Windows.Media.Protection.UseSoftwareProtectionLayer", true);
-                }
-            }
-
-            mediaElement.ProtectionManager = _protectionManager;
-
-            Debug.WriteLine("Leave Playback.SetProtectionManager()");
-        }
-
-        void ProtectionManager_ComponentLoadFailed(MediaProtectionManager sender, ComponentLoadFailedEventArgs e)
-        {
-            Debug.WriteLine("Enter Playback.ProtectionManager_ComponentLoadFailed()");
-            Debug.WriteLine(e.Information.ToString());
-
-            //  List the failing components - RevocationAndRenewalInformation
-            for (int i = 0; i < e.Information.Items.Count; i++)
-            {
-                Debug.WriteLine(e.Information.Items[i].Name + "\nReasons=0x" + e.Information.Items[i].Reasons + "\n"
-                                + "Renewal Id=" + e.Information.Items[i].RenewalId);
-
-            }
+            Debug.WriteLine("ProtectionManager ComponentLoadFailed");
             e.Completion.Complete(false);
-            Debug.WriteLine("Leave Playback.ProtectionManager_ComponentLoadFailed()");
         }
 
         public ServiceRequestConfigData RequestConfigData
@@ -214,19 +195,35 @@ namespace GO.UWP.Player.Pages
         ServiceRequestConfigData _requestConfigData = null;
         MediaProtectionServiceCompletion _serviceCompletionNotifier = null;
 
-        void ProtectionManager_ServiceRequested(MediaProtectionManager sender, ServiceRequestedEventArgs srEvent)
+        private async void OnMediaProtectionManagerServiceRequested(MediaProtectionManager sender, ServiceRequestedEventArgs e)
         {
-            Debug.WriteLine("Enter Playback.ProtectionManager_ServiceRequested()");
+            Debug.WriteLine("ProtectionManager ServiceRequested");
 
-            _serviceCompletionNotifier = srEvent.Completion;
-            IPlayReadyServiceRequest serviceRequest = (IPlayReadyServiceRequest)srEvent.Request;
+            _serviceCompletionNotifier = e.Completion;
+            IPlayReadyServiceRequest serviceRequest = (IPlayReadyServiceRequest)e.Request;
             Debug.WriteLine("Servie request type = " + serviceRequest.GetType());
 
-            _requestChain = new RequestChain(serviceRequest);
-            _requestChain.RequestConfigData = this.RequestConfigData;
-            _requestChain.FinishAndReportResult(new ReportResultDelegate(HandleServiceRequest_Finished));
+            var result = false;
 
-            Debug.WriteLine("Leave Playback.ProtectionManager_ServiceRequested()");
+            if (serviceRequest.Type == PlayReadyStatics.IndividualizationServiceRequestType)
+            {
+                result = await PlayReadyLicenseHandler.RequestIndividualizationToken(serviceRequest as PlayReadyIndividualizationServiceRequest);
+            }
+            else if (serviceRequest.Type == PlayReadyStatics.LicenseAcquirerServiceRequestType)
+            {
+                // NOTE: You might need to set the request.ChallengeCustomData, depending on your Rights Manager.
+                if (RequestConfigData != null)
+                {
+                    _requestChain = new RequestChain(serviceRequest);
+                    _requestChain.RequestConfigData = this.RequestConfigData;
+                    _requestChain.FinishAndReportResult(HandleServiceRequest_Finished);
+
+                    return;
+                }
+                else result = await PlayReadyLicenseHandler.RequestLicense(serviceRequest as PlayReadyLicenseAcquisitionServiceRequest);
+            }
+
+            _serviceCompletionNotifier.Complete(result);
         }
 
         void HandleServiceRequest_Finished(bool bResult, object resultContext)
@@ -237,6 +234,24 @@ namespace GO.UWP.Player.Pages
             _serviceCompletionNotifier.Complete(bResult);
 
             Debug.WriteLine("Leave Playback.HandleServiceRequest_Finished()");
+        }
+
+        private void ButtonPlayPause_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (Player.CurrentState != MediaElementState.Paused) Player.Pause();
+            else Player.PlayResume();
+        }
+
+        private void ButtonAudioStream_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (Player.AvailableAudioStreams.Count > 1) Player.SelectedAudioStream = Player.AvailableAudioStreams.First(x => x != Player.SelectedAudioStream);
+        }
+
+        private void ButtonSubtitles_OnClick(object sender, RoutedEventArgs e)
+        {
+            Player.IsCaptionsActive = true;
+            if (Player.SelectedCaption == null && Player.AvailableCaptions.Count >= 1) Player.SelectedCaption = Player.AvailableCaptions.First();
+            else if (Player.AvailableCaptions.Count > 1) Player.SelectedCaption = Player.AvailableCaptions.First(x => x != Player.SelectedCaption);
         }
     }
 }

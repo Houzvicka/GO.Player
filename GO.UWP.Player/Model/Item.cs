@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace GO.UWP.Player.Model
 {
-    public partial class SearchResult
+    public partial class Item
     {
         [JsonProperty("ObjectType")]
         public long ObjectType { get; set; }
@@ -22,7 +22,7 @@ namespace GO.UWP.Player.Model
         public object BackgroundUrl { get; set; }
 
         [JsonProperty("Color")]
-        public object Color { get; set; }
+        public string Color { get; set; }
 
         [JsonProperty("Container")]
         public List<Container> Container { get; set; }
@@ -43,7 +43,7 @@ namespace GO.UWP.Player.Model
         public Guid Id { get; set; }
 
         [JsonProperty("ImageIdentifier")]
-        public object ImageIdentifier { get; set; }
+        public string ImageIdentifier { get; set; }
 
         [JsonProperty("Index")]
         public long Index { get; set; }
@@ -52,7 +52,7 @@ namespace GO.UWP.Player.Model
         public bool IsSelection { get; set; }
 
         [JsonProperty("Name")]
-        public object Name { get; set; }
+        public string Name { get; set; }
 
         [JsonProperty("NormalContentNumber")]
         public long NormalContentNumber { get; set; }
@@ -67,7 +67,10 @@ namespace GO.UWP.Player.Model
         public List<object> SortOptions { get; set; }
 
         [JsonProperty("Tracking")]
-        public object Tracking { get; set; }
+        public Tracking Tracking { get; set; }
+
+        [JsonProperty("Version")]
+        public long Version { get; set; }
 
         [JsonProperty("ViewType")]
         public long ViewType { get; set; }

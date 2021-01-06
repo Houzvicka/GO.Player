@@ -18,13 +18,17 @@
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
     <PackageCertificateKeyFile>GO.UWP.Player_StoreKey.pfx</PackageCertificateKeyFile>
-    <PackageCertificateThumbprint>28EF634D49DC087394C6BD20097DF04E2ADF55EF</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>
+    </PackageCertificateThumbprint>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>
     <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
+    <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+    <GenerateTestArtifacts>True</GenerateTestArtifacts>
+    <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -131,8 +135,11 @@
     <Compile Include="Contracts\ISettingsService.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\ContentToVisibilityConverter.cs" />
+    <Compile Include="Converters\CountryItemToFlagStringConverter.cs" />
     <Compile Include="Converters\ValueToVisibilityConverter.cs" />
+    <Compile Include="Extensions\ExceptionExtensions.cs" />
     <Compile Include="Helpers\Base64Helpers.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Helpers\LocalSettings.cs" />
     <Compile Include="Helpers\Playback\HttpHelper.cs" />
     <Compile Include="Helpers\Playback\Indiv.cs" />
@@ -140,16 +147,19 @@
     <Compile Include="Helpers\Playback\LicenseManagement.cs" />
     <Compile Include="Helpers\Playback\Metering.cs" />
     <Compile Include="Helpers\Playback\Playback.cs" />
+    <Compile Include="Helpers\Playback\PlayReadyLicenseHandler.cs" />
     <Compile Include="Helpers\Playback\RequestChain.cs" />
     <Compile Include="Helpers\Playback\Revocation.cs" />
     <Compile Include="Helpers\Playback\SecureStop.cs" />
     <Compile Include="Helpers\Playback\ServiceRequest.cs" />
+    <Compile Include="Helpers\StatsInfo.cs" />
     <Compile Include="Messages\NavigateMainFrameMessage.cs" />
     <Compile Include="Model\AudioTrack.cs" />
     <Compile Include="Model\Categories.cs" />
     <Compile Include="Model\CategoriesItem.cs" />
     <Compile Include="Model\ChildContents.cs" />
     <Compile Include="Model\Container.cs" />
+    <Compile Include="Model\Operators.cs" />
     <Compile Include="Model\Contents.cs" />
     <Compile Include="Model\ContentsItem.cs" />
     <Compile Include="Model\CurrentDevice.cs" />
@@ -158,14 +168,15 @@
     <Compile Include="Model\Error.cs" />
     <Compile Include="Model\Filter.cs" />
     <Compile Include="Model\FluffyTracking.cs" />
+    <Compile Include="Model\OperatorItem.cs" />
     <Compile Include="Model\LoginResponse.cs" />
     <Compile Include="Model\Login.cs" />
-    <Compile Include="Model\Operators.cs" />
+    <Compile Include="Model\Parameter.cs" />
     <Compile Include="Model\ParentalControl.cs" />
     <Compile Include="Model\Purchase.cs" />
     <Compile Include="Model\ItemTracking.cs" />
     <Compile Include="Model\Registration.cs" />
-    <Compile Include="Model\SearchResult.cs" />
+    <Compile Include="Model\Item.cs" />
     <Compile Include="Model\SortOption.cs" />
     <Compile Include="Model\Subtitle.cs" />
     <Compile Include="Model\Tracking.cs" />
@@ -175,9 +186,6 @@
     </Compile>
     <Compile Include="Pages\CategoryPage.xaml.cs">
       <DependentUpon>CategoryPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\DebugPlayerPage.xaml.cs">
-      <DependentUpon>DebugPlayerPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\DetailPage.xaml.cs">
       <DependentUpon>DetailPage.xaml</DependentUpon>
@@ -200,7 +208,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CommunicationService.cs" />
     <Compile Include="Services\ConfigService.cs" />
-    <Compile Include="Services\SettingsService.cs" />
+    <Compile Include="Storage\SettingsService.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
   </ItemGroup>
@@ -210,6 +218,7 @@
     </AppxManifest>
     <None Include="GO.UWP.Player_StoreKey.pfx" />
     <None Include="GO.UWP.Player_TemporaryKey.pfx" />
+    <Compile Include="Storage\Static.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Package.StoreAssociation.xml" />
@@ -279,10 +288,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\DebugPlayerPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Pages\DetailPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -317,6 +322,12 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.AppCenter.Analytics">
+      <Version>4.1.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AppCenter.Crashes">
+      <Version>4.1.0</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.1.9</Version>
     </PackageReference>
@@ -344,7 +355,12 @@
       <Project>{84a3f824-24be-4e88-abae-f228e8a40f37}</Project>
       <Name>Microsoft.PlayerFramework.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\UWP.Xaml.TimedText\Microsoft.PlayerFramework.TimedText.csproj">
+      <Project>{1d33874f-bf6d-4a99-89a9-2833e475e16e}</Project>
+      <Name>Microsoft.PlayerFramework.TimedText</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
