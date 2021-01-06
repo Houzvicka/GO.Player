@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -89,28 +90,19 @@ namespace GO.UWP.Player
             deferral.Complete();
         }
         
-        private async void ShowError(Windows.UI.Xaml.UnhandledExceptionEventArgs e)
+        private void ShowError(Windows.UI.Xaml.UnhandledExceptionEventArgs e)
         {
             // warning Do not include this test Error dialog in the Release build!
             e.Handled = true;
             try
             {
-                var msgbox = new ContentDialog
-                {
-                    Title = "Nastala výjimka v aplikaci!",
-                    Content = "V aplikaci nastala chyba, odeslat hlášení o chybě mailem?",
-                    PrimaryButtonText = "Odeslat",
-                    CloseButtonText = "Zrušit"
-                };
-                var res = await msgbox.ShowAsync();
-                if (res != ContentDialogResult.Secondary) return;
-
-                EmailMessage mail = new EmailMessage();
-                mail.To.Add(new EmailRecipient("app@jiri.it"));
-                mail.Subject = "[Exception] GO Player";
-                mail.Body = $"Seznam.cz {StatsInfo.AppVersion}, {StatsInfo.OsVersion}, {StatsInfo.DeviceModel}" +
-                            $"\n\n{e.Message}\n\n{e.Exception.ToNiceString(6)}";
-                await EmailManager.ShowComposeNewEmailAsync(mail);
+                Crashes.TrackError(e.Exception, new Dictionary<string, string>{
+                    { "AppVersion", StatsInfo.AppVersion },
+                    { "OSVersion", StatsInfo.OsVersion },
+                    { "Device", StatsInfo.DeviceModel },
+                    { "ErrorMessage", e.Message },
+                    { "ErrorNiceString", e.Exception.ToNiceString(6) }
+                });
             }
             catch (Exception ex2)
             {

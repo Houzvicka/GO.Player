@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Windows.Security.ExchangeActiveSyncProvisioning;
 using Windows.Web.Http;
 using Windows.Web.Http.Filters;
 using GO.UWP.Player.Contracts;
@@ -63,14 +64,16 @@ namespace GO.UWP.Player.Services
 
                 lg.CurrentDevice = device;
 
+                EasClientDeviceInformation eas = new EasClientDeviceInformation();
+
                 //TEST
                 lg.BirthYear = 1;
                 if(lg.CurrentDevice == null) lg.CurrentDevice = new CurrentDevice();
-                lg.CurrentDevice.Brand = "Chrome";
-                lg.CurrentDevice.Modell = "71";
-                lg.CurrentDevice.OsName = "Linux";
-                lg.CurrentDevice.OsVersion = "undefined";
-                lg.CurrentDevice.Platform = "COMP";
+                lg.CurrentDevice.Brand = eas.SystemManufacturer;
+                lg.CurrentDevice.Modell = eas.SystemProductName;
+                lg.CurrentDevice.OsName = "Windows";
+                lg.CurrentDevice.OsVersion = eas.SystemFirmwareVersion;
+                lg.CurrentDevice.Platform = "XONE";
                 lg.CurrentDevice.SwVersion = "3.3.9.6418.2100";
                 //
 

@@ -153,6 +153,7 @@ namespace GO.UWP.Player.ViewModel
         public async void Login(string login, string password, Guid operatorId, CurrentDevice device)
         {
             CurrentUser = await communication.Login(config.HboAccountLoginUri(CurrentlySelectedCountry.CountryCodeLong, CurrentlySelectedCountry.LanguageCode, "XONE"), login, password, operatorId, device);
+            // TODO if error logout
         }
 
         public async void LoadCategories()

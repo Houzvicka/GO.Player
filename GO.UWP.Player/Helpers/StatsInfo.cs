@@ -21,12 +21,12 @@ namespace GO.UWP.Player.Helpers
 		public static string AppVersion { get; private set; }
 
 		/// <summary>
-		/// Device name in format "{manufacturer} {model}"
+		/// Device name in format "{manufacturer} {model} - {FriendlyName}"
 		/// </summary>
 		public static string DeviceModel { get; private set; }
 
 		/// <summary>
-		/// Type of the device, either "phone" or "tablet"
+		/// Type of the device, either "phone", "tablet" or "xbox"
 		/// </summary>
 		public static string DeviceType { get; private set; }
 
@@ -71,6 +71,7 @@ namespace GO.UWP.Player.Helpers
 			AppVersion = $"{ivd.Major}.{ivd.Minor}.{ivd.Build}.{ivd.Revision}";
 
 			DetectDeviceType();
+			DetectDeviceModel();
 		}
 
 		private static string GetDeviceIdInternal()
@@ -130,6 +131,13 @@ namespace GO.UWP.Player.Helpers
 			// set the full OS version using the DeviceFamilyVersion property
 			string sv = avi.DeviceFamilyVersion;
 			SetOsVersion(sv);
+        }
+
+		private static void DetectDeviceModel()
+		{
+            EasClientDeviceInformation eas = new EasClientDeviceInformation();
+
+            DeviceModel = eas.SystemManufacturer + " " + eas.SystemProductName + " - " + eas.FriendlyName;
         }
 
 		private static void SetOsVersion(string sv)

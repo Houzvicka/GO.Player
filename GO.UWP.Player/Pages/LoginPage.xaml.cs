@@ -11,6 +11,7 @@ using GO.UWP.Player.Messages;
 using GO.UWP.Player.Model;
 using GO.UWP.Player.Static;
 using GO.UWP.Player.ViewModel;
+using Microsoft.AppCenter.Analytics;
 
 namespace GO.UWP.Player.Pages
 {
@@ -48,6 +49,8 @@ namespace GO.UWP.Player.Pages
                 LoginResponse lr = await mvm.TryLogin(usernameTextBox.Text, passBox.Password, selectedO.Id, selectedC);
                 if (lr != null && lr.Error == null)
                 {
+                    Analytics.TrackEvent("LoginSuccess");
+
                     settings.NationalDomain = selectedC.NationalDomain;
                     settings.OperatorId = selectedO.Id;
                     settings.Username = usernameTextBox.Text;
@@ -59,6 +62,7 @@ namespace GO.UWP.Player.Pages
                 }
                 else
                 {
+                    Analytics.TrackEvent("LoginFailed");
                     ErrorTextBlock.Text = lr?.Error == null ? "Unable to Login" : lr.ErrorMessage;
                 }
             }
