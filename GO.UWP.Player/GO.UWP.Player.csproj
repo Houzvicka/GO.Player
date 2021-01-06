@@ -337,6 +337,9 @@
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.1</Version>
     </PackageReference>
+    <PackageReference Include="Villagra.Microsoft.Universal.Smooth.Streaming.Client.SDK">
+      <Version>1.0.161101</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="Microsoft.VCLibs, Version=14.0">
