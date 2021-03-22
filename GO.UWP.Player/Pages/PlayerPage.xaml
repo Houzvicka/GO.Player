@@ -5,23 +5,34 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:playerFramework="using:Microsoft.PlayerFramework"
-    mc:Ignorable="d" NavigationCacheMode="Required"
+    mc:Ignorable="d" NavigationCacheMode="Required" KeyDown="PlayerPage_OnKeyDown"
     DataContext="{Binding Main, Source={StaticResource Locator}}"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary 
+                    Source="ms-appx:///Themes/CustomPlayerTheme.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <playerFramework:MediaPlayer x:Name="Player" 
-                                     IsFullScreenEnabled="True" 
+        <!--IsTimelineVisible="False" -->
+        <playerFramework:MediaPlayer x:Name="Player"
+                                     IsFullScreenEnabled="True"
                                      IsFullScreenVisible="True" 
                                      AutoHideInterval="60" 
                                      IsAudioSelectionEnabled="True" 
                                      IsAudioSelectionVisible="True" 
                                      IsCaptionSelectionEnabled="True" 
                                      IsCaptionSelectionVisible="True"
-                                     IsCaptionsActive="True" />
+                                     IsCaptionsActive="True" 
+                                     IsTimeElapsedVisible="True" 
+                                     IsTimeRemainingVisible="True"/>
     </Grid>
 </Page>

@@ -15,7 +15,7 @@ namespace Microsoft.PlayerFramework
     /// <summary>
     /// A control that acts like a list box but presents a separate option for unselecting to the user.
     /// </summary>
-    public class DeselectableListBox : Control
+    public class DeselectableListBox : ListBox
     {
         /// <summary>
         /// The internal instance listbox used by this control to display the items.

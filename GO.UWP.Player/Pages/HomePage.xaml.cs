@@ -87,5 +87,10 @@ namespace GO.UWP.Player.Pages
                 //mainNavigationView.items
             }
         }
+
+        private void ListViewBase_OnItemClick(object sender, ItemClickEventArgs e)
+        {
+            main.OpenDetailCommand.Execute(e.ClickedItem);
+        }
     }
 }

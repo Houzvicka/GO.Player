@@ -6,12 +6,15 @@ using Windows.Foundation.Collections;
 using Windows.Media;
 using Windows.Media.Protection;
 using Windows.Media.Protection.PlayReady;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using GO.UWP.Player.Helpers;
 using GO.UWP.Player.Helpers.Playback;
+using GO.UWP.Player.Messages;
 using GO.UWP.Player.Model;
 using GO.UWP.Player.ViewModel;
 using Microsoft.PlayerFramework.Adaptive;
@@ -52,13 +55,13 @@ namespace GO.UWP.Player.Pages
             SetupRequestConfigData(mvm.CurrentUser.Customer.Id, mvm.CurrentlySelectedVideo.Purchase);
             var playUri = new Uri(mvm.CurrentlySelectedVideo.Purchase.MediaUrl.AbsoluteUri + "/manifest");
 
+            Player.Source = new Uri(playUri.ToString());
+
             InitializePlugins();
             InitializeMediaExtensionManager();
             InitializeMediaProtectionManager();
 
             HookEventHandlers();
-
-            Player.Source = new Uri(playUri.ToString());
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -121,7 +124,7 @@ namespace GO.UWP.Player.Pages
             if (Player != null)
             {
                 Player.Close();
-                Player = null;
+                //Player = null;
             }
         }
 
@@ -129,11 +132,9 @@ namespace GO.UWP.Player.Pages
         private void InitializePlugins()
         {
             var adaptivePlugin = new AdaptivePlugin() { InstreamCaptionsEnabled = true };
-
             Player.Plugins.Add(adaptivePlugin);
 
             var captionPlugin = new CaptionsPlugin();
-            //captionPlugin.CaptionParsed += CaptionPlugin_CaptionParsed;
             Player.Plugins.Add(captionPlugin);
         }
 
@@ -236,22 +237,19 @@ namespace GO.UWP.Player.Pages
             Debug.WriteLine("Leave Playback.HandleServiceRequest_Finished()");
         }
 
-        private void ButtonPlayPause_OnClick(object sender, RoutedEventArgs e)
+        private void PlayerPage_OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (Player.CurrentState != MediaElementState.Paused) Player.Pause();
-            else Player.PlayResume();
-        }
+            if (e.OriginalKey == VirtualKey.GamepadRightTrigger)
+            {
+                FocusManager.TryMoveFocus(FocusNavigationDirection.Next);
+                e.Handled = true;
+            }
+            //if (e.OriginalKey == VirtualKey.GamepadB && Player.Plugins.)
+            {
+                //e.Handled = true;
+            }
 
-        private void ButtonAudioStream_OnClick(object sender, RoutedEventArgs e)
-        {
-            if (Player.AvailableAudioStreams.Count > 1) Player.SelectedAudioStream = Player.AvailableAudioStreams.First(x => x != Player.SelectedAudioStream);
-        }
-
-        private void ButtonSubtitles_OnClick(object sender, RoutedEventArgs e)
-        {
-            Player.IsCaptionsActive = true;
-            if (Player.SelectedCaption == null && Player.AvailableCaptions.Count >= 1) Player.SelectedCaption = Player.AvailableCaptions.First();
-            else if (Player.AvailableCaptions.Count > 1) Player.SelectedCaption = Player.AvailableCaptions.First(x => x != Player.SelectedCaption);
+            Debug.WriteLine(e.OriginalKey);
         }
     }
 }

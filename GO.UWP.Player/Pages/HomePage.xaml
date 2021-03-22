@@ -25,12 +25,17 @@
         </NavigationView.AutoSuggestBox>
         <Grid Margin="0, 0">
 
-            <ListView ItemsSource="{Binding CurrentlySelectedMainPageCategory.Container}" IsTabStop="False">
+            <ListView ItemsSource="{Binding CurrentlySelectedMainPageCategory.Container}" SelectionMode="None">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="IsTabStop" Value="False"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
                     <DataTemplate x:Name="DoubleLineDataTemplate">
                         <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="12,12,0,0">
                             <TextBlock Text="{Binding Name}" Style="{ThemeResource HeaderTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" Margin="5,5,5,10" />
-                            <ListView ItemsSource="{Binding Contents.Items}" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.VerticalScrollMode="Disabled">
+                            <ListView ItemsSource="{Binding Contents.Items}" SelectionMode="None" IsItemClickEnabled="True" ItemClick="ListViewBase_OnItemClick" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollMode="Enabled" ScrollViewer.VerticalScrollMode="Disabled">
                                 <ListView.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <ItemsWrapGrid MaximumRowsOrColumns="1" Orientation="Vertical"/>
@@ -38,17 +43,15 @@
                                 </ListView.ItemsPanel>
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:Name="ImageTextDataTemplate">
-                                        <Button Command="{Binding ElementName=mainNavigationView, Path=DataContext.OpenDetailCommand }" CommandParameter="{Binding}">
-                                            <StackPanel Height="280" Width="180" Margin="12">
-                                                <Grid HorizontalAlignment="Left" Width="180" Height="230">
-                                                    <Image Source="{Binding BackgroundUrl}" Height="230" Stretch="UniformToFill" Margin="0" HorizontalAlignment="Center"/>
-                                                </Grid>
-                                                <StackPanel Margin="0,12">
-                                                    <TextBlock Text="{Binding Name}"/>
-                                                    <TextBlock Text="{Binding ProductionYear}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                                </StackPanel>
+                                        <StackPanel Height="280" Width="180" Margin="12">
+                                            <Grid HorizontalAlignment="Left" Width="180" Height="230">
+                                                <Image Source="{Binding BackgroundUrl}" Height="230" Stretch="UniformToFill" Margin="0" HorizontalAlignment="Center"/>
+                                            </Grid>
+                                            <StackPanel Margin="0,12">
+                                                <TextBlock Text="{Binding Name}"/>
+                                                <TextBlock Text="{Binding ProductionYear}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                             </StackPanel>
-                                        </Button>
+                                        </StackPanel>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                             </ListView>
